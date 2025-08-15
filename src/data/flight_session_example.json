@@ -1,0 +1,88 @@
+{
+  "id": "session_2024_08_14_001",
+  "aircraft": "G-AIRM",
+  "pilot": "Sarah Mitchell",
+  "instructor": "Capt. James Wilson",
+  "date": "2024-08-14",
+  "departure": "EGKB",
+  "arrival": "EGKB",
+  "route": "EGKB - Local Area - EGKB",
+  "flightTime": 1.5,
+  "phases": [
+    {
+      "name": "Takeoff",
+      "startTime": "09:15",
+      "endTime": "09:18",
+      "altitude": 1200,
+      "performance": "good"
+    },
+    {
+      "name": "General Handling",
+      "startTime": "09:18",
+      "endTime": "09:45",
+      "altitude": 2500,
+      "performance": "excellent"
+    },
+    {
+      "name": "Practice Approaches",
+      "startTime": "09:45",
+      "endTime": "10:35",
+      "altitude": 1000,
+      "performance": "satisfactory"
+    },
+    {
+      "name": "Landing",
+      "startTime": "10:35",
+      "endTime": "10:45",
+      "altitude": 0,
+      "performance": "good"
+    }
+  ],
+  "exceedances": [
+    {
+      "parameter": "Airspeed",
+      "value": 135,
+      "limit": 129,
+      "phase": "Practice Approaches",
+      "severity": "minor"
+    }
+  ],
+  "scores": {
+    "approachStability": 78,
+    "landingRate": 85,
+    "navigationAccuracy": 92,
+    "radioWork": 88,
+    "overall": 86
+  },
+  "telemetry": [
+    {
+      "time": "09:15:00",
+      "altitude": 0,
+      "speed": 0,
+      "heading": 270,
+      "verticalSpeed": 0
+    },
+    {
+      "time": "09:16:00",
+      "altitude": 400,
+      "speed": 75,
+      "heading": 270,
+      "verticalSpeed": 650
+    },
+    {
+      "time": "09:17:00",
+      "altitude": 800,
+      "speed": 85,
+      "heading": 275,
+      "verticalSpeed": 400
+    },
+    {
+      "time": "09:18:00",
+      "altitude": 1200,
+      "speed": 95,
+      "heading": 280,
+      "verticalSpeed": 200
+    }
+  ],
+  "aiDebrief": "Excellent general handling demonstration with smooth control inputs. Approach phase showed minor airspeed exceedance but recovery was prompt. Landing technique good with acceptable touchdown rate. Recommend continued focus on airspeed management during approach phase. Student demonstrates strong situational awareness and is progressing well toward solo authorization."
+}

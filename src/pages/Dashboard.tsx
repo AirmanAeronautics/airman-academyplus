@@ -3,8 +3,13 @@ import { KPICard } from "@/components/dashboard/KPICard"
 import { AlertCard } from "@/components/dashboard/AlertCard"
 import { RecentActivity } from "@/components/dashboard/RecentActivity"
 import { FleetStatus } from "@/components/dashboard/FleetStatus"
+import type { AcademyRole } from "@/types"
 
-export default function Dashboard() {
+interface DashboardProps {
+  currentUserRole?: AcademyRole;
+}
+
+export default function Dashboard({ currentUserRole = "ops_manager" }: DashboardProps) {
   return (
     <div className="space-y-6">
       {/* Page Header */}
