@@ -50,7 +50,7 @@ const students = [
   }
 ]
 
-export default function Students() {
+export default function People() {
   const [selectedStudent, setSelectedStudent] = useState(students[0])
   const [searchTerm, setSearchTerm] = useState("")
   const [showAIInsights, setShowAIInsights] = useState(false)
@@ -65,12 +65,12 @@ export default function Students() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Students</h1>
-          <p className="text-muted-foreground mt-1">Manage student profiles and track training progress</p>
+          <h1 className="text-3xl font-bold text-foreground">People</h1>
+          <p className="text-muted-foreground mt-1">Students and instructors directory (read-only)</p>
         </div>
         <Button className="bg-primary hover:bg-primary-dark">
-          <GraduationCap className="h-4 w-4 mr-2" />
-          Add Student
+          <MessageSquare className="h-4 w-4 mr-2" />
+          Send Notice to Captain
         </Button>
       </div>
 
@@ -141,15 +141,9 @@ export default function Students() {
                     <CardDescription>{selectedStudent.course} • {selectedStudent.stage}</CardDescription>
                   </div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setShowAIInsights(!showAIInsights)}
-                  className={showAIInsights ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <Bot className="h-4 w-4 mr-2" />
-                  AI Insights
-                </Button>
+                <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                  Read-only view
+                </div>
               </div>
               
               {showAIInsights && (
@@ -306,7 +300,7 @@ export default function Students() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Captain/XB-70 Flight Data Analysis</h4>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" disabled>
                         <Bot className="h-4 w-4 mr-2" />
                         Generate AI Debrief
                       </Button>

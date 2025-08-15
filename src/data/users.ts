@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   name: string;
-  role: "ops_manager" | "flight_instructor" | "maintenance_officer" | "compliance_officer" | "accounts_officer" | "student";
+  role: "ops_manager" | "flight_instructor" | "maintenance_officer" | "compliance_officer" | "accounts_officer" | "marketing_crm" | "support";
   email: string;
   avatar?: string;
   department: string;
@@ -45,10 +45,17 @@ export const users: User[] = [
   },
   {
     id: "6",
+    name: "Lisa Rodriguez",
+    role: "marketing_crm",
+    email: "l.rodriguez@airman.academy",
+    department: "Marketing & CRM"
+  },
+  {
+    id: "7",
     name: "Alex Johnson",
-    role: "student",
-    email: "a.johnson@student.airman.academy",
-    department: "Training"
+    role: "support",
+    email: "a.johnson@airman.academy",
+    department: "Customer Support"
   }
 ];
 

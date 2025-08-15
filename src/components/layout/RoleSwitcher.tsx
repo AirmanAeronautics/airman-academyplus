@@ -16,7 +16,8 @@ const roleLabels = {
   maintenance_officer: "Maintenance Officer",
   compliance_officer: "Compliance Officer",
   accounts_officer: "Accounts Officer",
-  student: "Student"
+  marketing_crm: "Marketing & CRM",
+  support: "Customer Support"
 }
 
 interface RoleSwitcherProps {

@@ -30,13 +30,15 @@ import { Input } from "@/components/ui/input"
 import { type User } from "@/data/users"
 
 const navigationItems = [
-  { title: "Dashboard", url: "/", icon: BarChart3, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer", "student"] },
-  { title: "Training Calendar", url: "/calendar", icon: Calendar, roles: ["ops_manager", "flight_instructor", "student"] },
-  { title: "Students", url: "/students", icon: Users, roles: ["ops_manager", "flight_instructor", "compliance_officer"] },
+  { title: "Dashboard", url: "/", icon: BarChart3, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer", "marketing_crm", "support"] },
+  { title: "Training Calendar", url: "/calendar", icon: Calendar, roles: ["ops_manager", "flight_instructor"] },
+  { title: "People", url: "/people", icon: Users, roles: ["ops_manager", "flight_instructor", "compliance_officer"] },
   { title: "Fleet & Maintenance", url: "/fleet", icon: Plane, roles: ["ops_manager", "maintenance_officer", "flight_instructor"] },
   { title: "Compliance", url: "/compliance", icon: FileText, roles: ["ops_manager", "compliance_officer"] },
   { title: "Finance", url: "/finance", icon: DollarSign, roles: ["ops_manager", "accounts_officer"] },
-  { title: "Messages", url: "/messages", icon: MessageSquare, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer", "student"] },
+  { title: "Marketing & CRM", url: "/marketing", icon: Users, roles: ["ops_manager", "marketing_crm"] },
+  { title: "Support", url: "/support", icon: MessageSquare, roles: ["ops_manager", "support", "marketing_crm"] },
+  { title: "Messages", url: "/messages", icon: MessageSquare, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer"] },
 ]
 
 interface AppSidebarProps {
