@@ -1,15 +1,14 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "./AppSidebar"
-import { Bell, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./AppSidebar";
+import { Bell, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
-
-export function AppLayout({ children }: AppLayoutProps) {
-  return (
-    <SidebarProvider defaultOpen={true}>
+export function AppLayout({
+  children
+}: AppLayoutProps) {
+  return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-muted/20">
         <AppSidebar />
         
@@ -18,9 +17,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="h-16 bg-white border-b border-border flex items-center justify-between px-6 aviation-card">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8" />
-              <div className="text-sm text-muted-foreground">
-                Welcome back to AIRMAN Academy+
-              </div>
+              
             </div>
             
             <div className="flex items-center gap-3">
@@ -43,6 +40,5 @@ export function AppLayout({ children }: AppLayoutProps) {
           </main>
         </div>
       </div>
-    </SidebarProvider>
-  )
+    </SidebarProvider>;
 }
