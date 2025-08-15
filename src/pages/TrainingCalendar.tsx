@@ -1,57 +1,41 @@
-import { Calendar, Clock, User, Plane } from "lucide-react"
+import { useState } from "react"
+import { Calendar, Clock, User, Plane, AlertTriangle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { SchedulerAgent } from "@/components/ai/SchedulerAgent"
+import { todaysFlights, type FlightSession } from "@/data/schedule"
+import { useToast } from "@/hooks/use-toast"
 
-interface FlightSession {
-  id: string
-  time: string
-  student: string
-  instructor: string
-  aircraft: string
-  type: string
-  status: "scheduled" | "in-progress" | "completed" | "cancelled"
-}
-
-const todaysFlights: FlightSession[] = [
-  {
-    id: "1",
-    time: "08:00 - 10:00",
-    student: "Sarah Wilson",
-    instructor: "Capt. Johnson",
-    aircraft: "N123AB",
-    type: "Solo Flight",
-    status: "completed"
-  },
-  {
-    id: "2", 
-    time: "10:30 - 12:30",
-    student: "Mike Chen",
-    instructor: "Capt. Smith",
-    aircraft: "N789EF",
-    type: "Navigation Training",
-    status: "in-progress"
-  },
-  {
-    id: "3",
-    time: "14:00 - 16:00", 
-    student: "Emma Davis",
-    instructor: "Capt. Wilson",
-    aircraft: "N123AB",
-    type: "Instrument Training",
-    status: "scheduled"
-  },
-  {
-    id: "4",
-    time: "16:30 - 18:30",
-    student: "John Smith",
-    instructor: "Capt. Johnson", 
-    aircraft: "N456CD",
-    type: "Cross Country",
-    status: "cancelled"
-  }
-]
+const initialFlights = todaysFlights;
 
 export default function TrainingCalendar() {
+  const [flights, setFlights] = useState(initialFlights);
+  const { toast } = useToast();
+
+  const handleScheduleChanges = (changes: any[]) => {
+    toast({
+      title: "Schedule Updated",
+      description: `Applied ${changes.length} optimization changes successfully.`,
+    });
+    
+    // In a real app, this would update the actual schedule
+    setTimeout(() => {
+      setFlights(prev => prev.map(flight => {
+        const change = changes.find(c => c.student === flight.student);
+        if (change) {
+          return {
+            ...flight,
+            aircraft: change.newAircraft || flight.aircraft,
+            instructor: change.newInstructor || flight.instructor,
+            time: change.newSlot || flight.time,
+            status: "scheduled" as const
+          };
+        }
+        return flight;
+      }));
+    }, 500);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
@@ -82,17 +66,20 @@ export default function TrainingCalendar() {
       {/* Today's Schedule */}
       <Card className="aviation-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Today's Schedule
-            <Badge variant="outline" className="ml-2">
-              {new Date().toLocaleDateString()}
-            </Badge>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              Today's Schedule
+              <Badge variant="outline" className="ml-2">
+                {new Date().toLocaleDateString()}
+              </Badge>
+            </div>
+            <SchedulerAgent onApplyChanges={handleScheduleChanges} />
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {todaysFlights.map((flight) => (
+            {flights.map((flight) => (
               <div key={flight.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -110,6 +97,12 @@ export default function TrainingCalendar() {
                       <Plane className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">{flight.aircraft} • {flight.type}</span>
                     </div>
+                    {flight.conflicts && (
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-destructive" />
+                        <span className="text-sm text-destructive">{flight.conflicts.join(", ")}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 

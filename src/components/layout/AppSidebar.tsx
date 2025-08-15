@@ -27,18 +27,23 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { type User } from "@/data/users"
 
 const navigationItems = [
-  { title: "Dashboard", url: "/", icon: BarChart3 },
-  { title: "Training Calendar", url: "/calendar", icon: Calendar },
-  { title: "Students", url: "/students", icon: Users },
-  { title: "Fleet & Maintenance", url: "/fleet", icon: Plane },
-  { title: "Compliance", url: "/compliance", icon: FileText },
-  { title: "Finance", url: "/finance", icon: DollarSign },
-  { title: "Messages", url: "/messages", icon: MessageSquare },
+  { title: "Dashboard", url: "/", icon: BarChart3, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer", "student"] },
+  { title: "Training Calendar", url: "/calendar", icon: Calendar, roles: ["ops_manager", "flight_instructor", "student"] },
+  { title: "Students", url: "/students", icon: Users, roles: ["ops_manager", "flight_instructor", "compliance_officer"] },
+  { title: "Fleet & Maintenance", url: "/fleet", icon: Plane, roles: ["ops_manager", "maintenance_officer", "flight_instructor"] },
+  { title: "Compliance", url: "/compliance", icon: FileText, roles: ["ops_manager", "compliance_officer"] },
+  { title: "Finance", url: "/finance", icon: DollarSign, roles: ["ops_manager", "accounts_officer"] },
+  { title: "Messages", url: "/messages", icon: MessageSquare, roles: ["ops_manager", "flight_instructor", "maintenance_officer", "compliance_officer", "accounts_officer", "student"] },
 ]
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  currentUser: User;
+}
+
+export function AppSidebar({ currentUser }: AppSidebarProps) {
   const { state } = useSidebar()
   const location = useLocation()
   const currentPath = location.pathname
@@ -94,7 +99,9 @@ export function AppSidebar() {
 
           <SidebarGroupContent className="px-2">
             <SidebarMenu className="space-y-1">
-              {navigationItems.map((item) => (
+              {navigationItems
+                .filter(item => item.roles.includes(currentUser.role))
+                .map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="h-auto p-0">
                     <NavLink
@@ -115,11 +122,13 @@ export function AppSidebar() {
           <div className="mt-auto px-4 py-4 border-t border-border">
             <div className="flex items-center gap-3 px-3 py-2">
               <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-primary font-medium text-sm">JD</span>
+                <span className="text-primary font-medium text-sm">
+                  {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground truncate">John Doe</div>
-                <div className="text-xs text-muted-foreground truncate">Flight Instructor</div>
+                <div className="text-sm font-medium text-foreground truncate">{currentUser.name}</div>
+                <div className="text-xs text-muted-foreground truncate">{currentUser.department}</div>
               </div>
             </div>
           </div>
