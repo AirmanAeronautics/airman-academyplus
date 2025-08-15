@@ -99,9 +99,9 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
 
           <SidebarGroupContent className="px-2">
             <SidebarMenu className="space-y-1">
-              {navigationItems
-                .filter(item => item.roles.includes(currentUser.role))
-                .map((item) => (
+            {navigationItems
+              .filter(item => currentUser && item.roles.includes(currentUser.role))
+              .map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="h-auto p-0">
                     <NavLink
@@ -123,12 +123,12 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
             <div className="flex items-center gap-3 px-3 py-2">
               <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-medium text-sm">
-                  {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  {currentUser?.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground truncate">{currentUser.name}</div>
-                <div className="text-xs text-muted-foreground truncate">{currentUser.department}</div>
+                <div className="text-sm font-medium text-foreground truncate">{currentUser?.name}</div>
+                <div className="text-xs text-muted-foreground truncate">{currentUser?.department}</div>
               </div>
             </div>
           </div>
