@@ -4,7 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { NotificationManager } from "@/components/NotificationManager";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import AdminSettings from "./pages/AdminSettings";
+import PendingRequests from "./pages/PendingRequests";
+import EventLog from "./pages/EventLog";
 import TrainingCalendar from "./pages/TrainingCalendar";
 import People from "./pages/People";
 import Fleet from "./pages/Fleet";
@@ -19,27 +26,40 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppLayout>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/calendar" element={<TrainingCalendar />} />
-            <Route path="/people" element={<People />} />
-            <Route path="/fleet" element={<Fleet />} />
-            <Route path="/compliance" element={<Compliance />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/marketing" element={<Marketing />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/messages" element={<Messages />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/*" element={
+              <ProtectedRoute>
+                <NotificationManager />
+                <AppLayout>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/admin/settings" element={<AdminSettings />} />
+                    <Route path="/admin/pending-requests" element={<PendingRequests />} />
+                    <Route path="/events" element={<EventLog />} />
+                    <Route path="/calendar" element={<TrainingCalendar />} />
+                    <Route path="/people" element={<People />} />
+                    <Route path="/fleet" element={<Fleet />} />
+                    <Route path="/compliance" element={<Compliance />} />
+                    <Route path="/finance" element={<Finance />} />
+                    <Route path="/marketing" element={<Marketing />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/messages" element={<Messages />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
           </Routes>
-        </AppLayout>
-      </BrowserRouter>
-    </TooltipProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

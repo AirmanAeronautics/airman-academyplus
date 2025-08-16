@@ -9,6 +9,8 @@ import {
   BarChart3,
   Headset, // for Support
   Megaphone, // for Marketing & CRM
+  Settings,
+  UserCheck,
 } from "lucide-react"
 
 import {
@@ -25,6 +27,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
 import { type User } from "@/data/users"
+import { useAuth } from "@/hooks/useAuth"
 
 // ---- ROLE MODEL -------------------------------------------------------------
 
@@ -78,6 +81,18 @@ const navigationItems: NavItem[] = [
       "marketing_crm",
       "support",
     ],
+  },
+  {
+    title: "Admin Settings",
+    url: "/admin/settings",
+    icon: Settings,
+    roles: ["admin"],
+  },
+  {
+    title: "Pending Requests",
+    url: "/admin/pending-requests",
+    icon: UserCheck,
+    roles: ["admin"],
   },
   {
     title: "Training Calendar",
