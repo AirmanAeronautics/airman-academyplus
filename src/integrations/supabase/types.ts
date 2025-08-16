@@ -14,11 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      event_log: {
+        Row: {
+          action: string
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          org_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          org_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          org_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
           id: string
           message: string
+          org_id: string | null
           read: boolean | null
           title: string
           type: string
@@ -28,6 +62,7 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          org_id?: string | null
           read?: boolean | null
           title: string
           type: string
@@ -37,6 +72,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          org_id?: string | null
           read?: boolean | null
           title?: string
           type?: string

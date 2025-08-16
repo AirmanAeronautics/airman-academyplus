@@ -7,6 +7,12 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { NotificationManager } from "@/components/NotificationManager";
+import DevUserInfo from "@/components/DevUserInfo";
+
+// Import admin bootstrap utilities in development
+if (process.env.NODE_ENV === 'development') {
+  import('@/utils/adminBootstrap');
+}
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AdminSettings from "./pages/AdminSettings";
@@ -30,6 +36,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <DevUserInfo />
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
