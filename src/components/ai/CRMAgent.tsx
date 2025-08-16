@@ -350,7 +350,7 @@ export function CRMAgent({ currentUserRole, onLeadUpdate }: CRMAgentProps) {
                     <li>• Referral leads convert 40% better than website leads</li>
                     <li>• CPL/ATPL inquiries have highest lifetime value potential</li>
                     <li>• Weekend training queries show 60% faster enrollment</li>
-                    <li>• Budget >£10k correlates with 80% completion rate</li>
+                    <li>• Budget &gt;£10k correlates with 80% completion rate</li>
                   </ul>
                 </div>
               </CardContent>

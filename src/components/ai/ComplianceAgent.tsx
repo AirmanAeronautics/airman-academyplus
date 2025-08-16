@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { logAIAction } from "@/lib/eventBus"
-import { complianceDocs, students, instructors } from "@/data/seeds"
+import { students, instructors } from "@/data/seeds"
 import { exportComplianceReport } from "@/lib/exports"
 import type { AcademyRole } from "@/types"
 
@@ -29,6 +29,14 @@ export function ComplianceAgent({ currentUserRole }: ComplianceAgentProps) {
     
     await new Promise(resolve => setTimeout(resolve, 2000))
 
+    // Create mock compliance docs for demonstration
+    const complianceDocs = [
+      { id: "1", person: "John Smith", type: "medical", status: "expired", expiry_date: "2024-01-15" },
+      { id: "2", person: "Sarah Johnson", type: "license", status: "expiring", expiry_date: "2024-03-20" },
+      { id: "3", person: "Mike Wilson", type: "rating", status: "current", expiry_date: "2024-12-10" },
+      { id: "4", person: "Emma Davis", type: "medical", status: "current", expiry_date: "2024-08-30" }
+    ]
+    
     // Analyze compliance status
     const expiredDocs = complianceDocs.filter(doc => doc.status === "expired")
     const expiringDocs = complianceDocs.filter(doc => doc.status === "expiring")
@@ -114,6 +122,14 @@ export function ComplianceAgent({ currentUserRole }: ComplianceAgentProps) {
 
   const exportReport = () => {
     if (!auditReport) return
+    
+    // Use the same mock data for export  
+    const complianceDocs = [
+      { id: "1", person: "John Smith", type: "medical", status: "expired", expiry_date: "2024-01-15", description: "Medical Certificate" },
+      { id: "2", person: "Sarah Johnson", type: "license", status: "expiring", expiry_date: "2024-03-20", description: "Pilot License" },
+      { id: "3", person: "Mike Wilson", type: "rating", status: "current", expiry_date: "2024-12-10", description: "Instrument Rating" },
+      { id: "4", person: "Emma Davis", type: "medical", status: "current", expiry_date: "2024-08-30", description: "Medical Certificate" }
+    ]
     
     const exportData = [
       ...auditReport.criticalIssues.map((issue: any) => ({
@@ -313,9 +329,16 @@ export function ComplianceAgent({ currentUserRole }: ComplianceAgentProps) {
                 <CardContent>
                   <div className="space-y-3">
                     {["medical", "license", "rating", "recency"].map(type => {
-                      const docs = complianceDocs.filter(d => d.type === type)
+                      // Use mock data for the monitoring display
+                      const mockDocs = [
+                        { type: "medical", status: "expired" },
+                        { type: "license", status: "expiring" },
+                        { type: "rating", status: "current" },
+                        { type: "recency", status: "current" }
+                      ]
+                      const docs = mockDocs.filter(d => d.type === type)
                       const expired = docs.filter(d => d.status === "expired").length
-                      const expiring = docs.filter(d => d.status === "expiring").length
+                      const expiring = docs.filter(d => d.status === "expiring").length  
                       const current = docs.filter(d => d.status === "current").length
                       
                       return (

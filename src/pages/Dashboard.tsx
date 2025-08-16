@@ -9,7 +9,7 @@ import { CRMAgent } from "@/components/ai/CRMAgent"
 import { ComplianceAgent } from "@/components/ai/ComplianceAgent"
 import { FinanceAgent } from "@/components/ai/FinanceAgent"
 import { SupportCopilot } from "@/components/ai/SupportCopilot"
-import { MaintenancePlanner } from "@/components/ai/MaintenancePlanner"
+
 import { getWidgetsForRole, getAIAgentsForRole, getPrimaryMetricsForRole } from "@/config/roleWidgets"
 import type { AcademyRole } from "@/types"
 
@@ -86,7 +86,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
       case "support_copilot":
         return <SupportCopilot key="support" currentUserRole={currentUserRole} />
       case "maintenance_planner":
-        return <MaintenancePlanner key="maintenance" currentUserRole={currentUserRole} />
+        return null // MaintenancePlanner is context-specific and used in Fleet page
       default:
         return null
     }
