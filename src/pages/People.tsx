@@ -7,6 +7,10 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
+import { StudentProgressDashboard } from "@/components/progress/StudentProgressDashboard"
+import { StudentReadinessDashboard } from "@/components/instructor/StudentReadinessDashboard"
+import { MILESTONES_PPL, AVAILABLE_BADGES } from "@/types/progress"
+import { useAuth } from "@/hooks/useAuth"
 
 const pilots = [
   // Students
@@ -98,10 +102,47 @@ const pilots = [
 ]
 
 export default function People() {
+  const { profile } = useAuth()
   const [selectedPilot, setSelectedPilot] = useState(pilots[0])
   const [searchTerm, setSearchTerm] = useState("")
   const [showAIInsights, setShowAIInsights] = useState(false)
   const [filterType, setFilterType] = useState("all")
+  const [activeTab, setActiveTab] = useState("directory")
+
+  // Mock student progress data
+  const mockStudentProgress = {
+    studentId: selectedPilot.id.toString(),
+    milestones: MILESTONES_PPL.map((milestone, index) => ({
+      ...milestone,
+      completed: index < 2, // First 2 milestones completed
+      dateCompleted: index < 2 ? "2024-08-15" : undefined
+    })),
+    badges: AVAILABLE_BADGES.slice(0, 3).map(badge => ({
+      ...badge,
+      dateEarned: "2024-08-15"
+    })),
+    streaks: [
+      { type: "consistency" as const, currentStreak: 5, bestStreak: 8, lastActivity: "2024-08-15" },
+      { type: "improvement" as const, currentStreak: 3, bestStreak: 5, lastActivity: "2024-08-14" },
+    ],
+    totalHours: selectedPilot.hoursFlown,
+    soloHours: Math.floor(selectedPilot.hoursFlown * 0.3),
+    dualHours: Math.floor(selectedPilot.hoursFlown * 0.7),
+    crossCountryHours: Math.floor(selectedPilot.hoursFlown * 0.4),
+    nightHours: Math.floor(selectedPilot.hoursFlown * 0.1),
+    instrumentHours: Math.floor(selectedPilot.hoursFlown * 0.2),
+    overallScore: selectedPilot.progress,
+    readinessLevel: selectedPilot.progress >= 80 ? "ready" : selectedPilot.progress >= 60 ? "approaching" : "not_ready" as const,
+    nextCheckride: selectedPilot.progress >= 80 ? "2024-08-25" : undefined,
+    weakAreas: ["Radio communications", "Crosswind landings"],
+    strongAreas: ["Landing technique", "Aircraft control", "Navigation"]
+  }
+
+  const handleGenerateDebrief = () => {
+    console.log("Generating AI debrief for student:", selectedPilot.name)
+  }
+
+  const isInstructor = profile?.role && ["instructor", "admin", "ops_manager"].includes(profile.role)
 
   const filteredPilots = pilots.filter(pilot => {
     const matchesSearch = pilot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -115,14 +156,24 @@ export default function People() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Pilots</h1>
-          <p className="text-muted-foreground mt-1">Students and instructors directory (read-only)</p>
+          <h1 className="text-3xl font-bold text-foreground">People & Progress</h1>
+          <p className="text-muted-foreground mt-1">Student progress tracking and instructor dashboard</p>
         </div>
         <Button className="bg-primary hover:bg-primary-dark">
           <MessageSquare className="h-4 w-4 mr-2" />
           Send Notice to Captain
         </Button>
       </div>
+
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="directory">Directory</TabsTrigger>
+          <TabsTrigger value="student-progress">Student Progress</TabsTrigger>
+          <TabsTrigger value="instructor-dashboard">Readiness Dashboard</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="directory" className="space-y-6">
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pilots List */}
