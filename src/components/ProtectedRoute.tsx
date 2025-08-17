@@ -29,19 +29,21 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/auth" replace />;
   }
 
-  // Check if user has a profile and organization access
+  // Auto-approval: All authenticated users with profiles can access the app
   if (profile) {
-    // If user has no org_id, show pending approval
-    if (!profile.org_id) {
-      return <PendingApproval />;
-    }
-    
-    // If user has org access, show the protected content
-    if (profile.org_id) {
-      return <>{children}</>;
-    }
+    return <>{children}</>;
   }
 
-  // Fallback to pending approval for any other case
-  return <PendingApproval />;
+  // If no profile exists yet (edge case), show loading state
+  // This should be very rare as the trigger creates profiles immediately
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <Card className="w-full max-w-md">
+        <CardContent className="flex flex-col items-center justify-center p-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <p className="text-sm text-muted-foreground">Setting up your account...</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
