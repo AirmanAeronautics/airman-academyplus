@@ -20,7 +20,7 @@ export default function Auth() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signInWithPassword } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -130,10 +130,7 @@ export default function Auth() {
           description: "We've sent you a magic link to sign in.",
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { error } = await signInWithPassword(email, password);
 
         if (error) throw error;
 
@@ -141,6 +138,8 @@ export default function Auth() {
           title: "Welcome back!",
           description: "You've been successfully signed in.",
         });
+        
+        // Immediate redirect - no waiting for profile
         navigate('/');
       }
     } catch (error: any) {

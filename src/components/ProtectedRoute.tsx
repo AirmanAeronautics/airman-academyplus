@@ -10,55 +10,28 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, profile, loading, profileTimeout } = useAuth();
+  const { user, session, authLoading } = useAuth();
 
-  if (loading) {
+  // Only show loading for authentication, not profile
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-            <p className="text-sm text-muted-foreground">Loading your account...</p>
+            <p className="text-sm text-muted-foreground">Authenticating...</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  if (!user) {
+  // Redirect to auth if not authenticated
+  if (!user || !session) {
     return <Navigate to="/auth" replace />;
   }
 
-  // Show timeout message if profile is taking too long
-  if (!profile && profileTimeout) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-            <p className="text-sm text-muted-foreground mb-2">Still setting up...</p>
-            <p className="text-xs text-muted-foreground text-center">This may take a moment. If this continues, please refresh the page.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Check if user has a profile with graceful fallback
-  if (profile) {
-    // Allow access even if org_id is missing (fallback handled in useAuth)
-    return <>{children}</>;
-  }
-
-  // If no profile exists yet (edge case), show loading state
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-      <Card className="w-full max-w-md">
-        <CardContent className="flex flex-col items-center justify-center p-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-          <p className="text-sm text-muted-foreground">Setting up your account...</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  // ✅ IMMEDIATE REDIRECT: Once authenticated, show app immediately
+  // Profile loading happens in background, no blocking
+  return <>{children}</>;
 }

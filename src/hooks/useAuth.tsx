@@ -7,9 +7,10 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: any;
-  loading: boolean;
-  profileTimeout: boolean;
+  authLoading: boolean;  // Only for authentication, not profile
+  profileLoading: boolean;  // Separate profile loading state
   signOut: () => Promise<void>;
+  signInWithPassword: (email: string, password: string) => Promise<{ error: any }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -31,8 +32,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [profileTimeout, setProfileTimeout] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);  // Only for initial auth check
+  const [profileLoading, setProfileLoading] = useState(false);  // Separate profile loading
   
   const { cachedProfile, saveToCache, clearCache } = useProfileCache(user?.id);
 
@@ -45,177 +46,204 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .single();
       return data;
     } catch {
-      return null;
+      return { id: 'default', name: 'Default Organization' }; // Fallback
     }
   };
 
-  const refreshProfile = async (retryCount = 0) => {
-    if (!user) {
-      console.log('❌ No user found, cannot fetch profile');
-      return;
+  const signInWithPassword = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      // Immediately get session after successful sign-in
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        setSession(sessionData.session);
+        setUser(sessionData.session.user);
+        
+        // Start profile loading in background (non-blocking)
+        setTimeout(() => {
+          refreshProfile();
+        }, 0);
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error };
     }
+  };
+
+  const refreshProfile = async () => {
+    if (!user) return;
+
+    setProfileLoading(true);
 
     // Use cached profile immediately if available
-    if (cachedProfile && retryCount === 0) {
+    if (cachedProfile) {
       console.log('✅ Using cached profile');
       setProfile(cachedProfile);
-      setLoading(false);
+      setProfileLoading(false);
       
       // Still fetch fresh data in background
-      setTimeout(() => refreshProfile(1), 100);
+      fetchFreshProfile();
       return;
     }
 
+    // Fetch fresh profile
+    await fetchFreshProfile();
+  };
+
+  const fetchFreshProfile = async () => {
+    if (!user) return;
+
     try {
-      console.log('🔄 Fetching profile for user:', user.id, 'attempt:', retryCount + 1);
+      console.log('🔄 Fetching fresh profile for user:', user.id);
       
-      // Set timeout for profile loading
+      // Set 3 second timeout
       const timeoutId = setTimeout(() => {
-        if (loading && retryCount === 0) {
-          console.log('⏰ Profile loading timeout reached');
-          setProfileTimeout(true);
-        }
+        console.log('⏰ Profile fetch timeout - using fallback');
+        createFallbackProfile();
       }, 3000);
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          organizations!inner(*)
-        `)
-        .eq('id', user.id)
-        .maybeSingle();
+      // Parallel queries for better performance
+      const [profileResult, defaultOrg] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select(`*, organizations(*)`)
+          .eq('id', user.id)
+          .maybeSingle(),
+        getDefaultOrg()
+      ]);
 
       clearTimeout(timeoutId);
       
-      console.log('📊 Profile query result:', { data, error });
+      const { data: profileData, error } = profileResult;
       
-      if (error) {
-        console.error('❌ Error fetching profile:', error);
-        
-        // Fallback: try without organization join
-        const { data: basicProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-          
-        if (basicProfile) {
-          // If missing org_id, assign default organization
-          if (!basicProfile.org_id) {
-            const defaultOrg = await getDefaultOrg();
-            if (defaultOrg) {
-              basicProfile.org_id = defaultOrg.id;
-              (basicProfile as any).organizations = [defaultOrg];
-            }
-          }
-          
-          console.log('✅ Using basic profile with fallback');
-          setProfile(basicProfile);
-          saveToCache(basicProfile, user.id);
-        }
-        
-        setLoading(false);
+      if (error || !profileData) {
+        console.log('📝 Creating fallback profile');
+        createFallbackProfile();
         return;
       }
-      
-      // If no profile found and we haven't retried too many times
-      if (!data && retryCount < 2) {
-        console.log(`⏳ No profile found, retrying... (attempt ${retryCount + 1})`);
-        setTimeout(() => {
-          refreshProfile(retryCount + 1);
-        }, 1000);
-        return;
-      }
-      
-      if (!data) {
-        console.error('❌ Profile not found after retries');
-        
-        // Final fallback: create minimal profile with default org
-        const defaultOrg = await getDefaultOrg();
-        const fallbackProfile = {
-          id: user.id,
-          email: user.email,
-          name: user.user_metadata?.full_name || null,
-          role: 'user',
-          org_id: defaultOrg?.id || null,
-          organizations: defaultOrg ? [defaultOrg] : []
-        };
-        
-        console.log('🚨 Using fallback profile');
-        setProfile(fallbackProfile);
-        setLoading(false);
-        return;
-      }
-      
-      // Handle case where organization data is null but org_id exists
-      if (data.org_id && (!data.organizations || !Array.isArray(data.organizations) || data.organizations.length === 0)) {
-        console.log('🔧 Fixing missing organization data');
+
+      // Handle missing organization data
+      if (profileData.org_id && (!profileData.organizations || !Array.isArray(profileData.organizations) || profileData.organizations.length === 0)) {
         const { data: orgData } = await supabase
           .from('organizations')
           .select('*')
-          .eq('id', data.org_id)
+          .eq('id', profileData.org_id)
           .single();
-          
+        
         if (orgData) {
-          (data as any).organizations = [orgData];
+          (profileData as any).organizations = [orgData];
         }
       }
-      
-      console.log('✅ Profile loaded successfully:', data);
-      setProfile(data);
-      saveToCache(data, user.id);
-      setLoading(false);
-      setProfileTimeout(false);
+
+      // Ensure profile has org_id
+      if (!profileData.org_id && defaultOrg) {
+        profileData.org_id = defaultOrg.id;
+        (profileData as any).organizations = [defaultOrg];
+      }
+
+      console.log('✅ Profile loaded successfully');
+      setProfile(profileData);
+      saveToCache(profileData, user.id);
       
     } catch (error) {
-      console.error('💥 Exception in refreshProfile:', error);
-      setLoading(false);
+      console.error('💥 Profile fetch error:', error);
+      createFallbackProfile();
+    } finally {
+      setProfileLoading(false);
     }
   };
 
+  const createFallbackProfile = async () => {
+    if (!user) return;
+
+    const defaultOrg = await getDefaultOrg();
+    const fallbackProfile = {
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+      role: 'user',
+      org_id: defaultOrg.id,
+      organizations: [defaultOrg],
+      created_at: new Date().toISOString(),
+      fallback: true // Flag to indicate this is a fallback
+    };
+
+    console.log('🚨 Using fallback profile');
+    setProfile(fallbackProfile);
+    setProfileLoading(false);
+  };
+
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+
+        console.log('🔐 Auth state change:', event);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Reset timeout state for new session
-          setProfileTimeout(false);
-          // Fetch user profile when user logs in
+          // Non-blocking profile fetch
           setTimeout(() => {
-            refreshProfile();
-          }, 100);
+            if (mounted) refreshProfile();
+          }, 0);
         } else {
           setProfile(null);
           clearCache();
+          setProfileLoading(false);
         }
         
-        setLoading(false);
+        // Auth loading is done
+        setAuthLoading(false);
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        setTimeout(() => {
-          refreshProfile();
-        }, 100);
-      }
-      
-      setLoading(false);
-    });
+    // Check for existing session immediately
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!mounted) return;
 
-    return () => subscription.unsubscribe();
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Start profile loading immediately but non-blocking
+          setTimeout(() => {
+            if (mounted) refreshProfile();
+          }, 0);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      } finally {
+        if (mounted) setAuthLoading(false);
+      }
+    };
+
+    checkSession();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
     clearCache();
+    setProfile(null);
+    setProfileLoading(false);
     await supabase.auth.signOut();
   };
 
@@ -223,9 +251,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     session,
     profile,
-    loading,
-    profileTimeout,
+    authLoading,
+    profileLoading,
     signOut,
+    signInWithPassword,
     refreshProfile
   };
 

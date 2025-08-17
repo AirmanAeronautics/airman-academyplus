@@ -12,6 +12,8 @@ import { SupportCopilot } from "@/components/ai/SupportCopilot"
 
 import { getWidgetsForRole, getAIAgentsForRole, getPrimaryMetricsForRole } from "@/config/roleWidgets"
 import type { AcademyRole } from "@/types"
+import { useAuth } from "@/hooks/useAuth"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface DashboardProps {
   currentUserRole?: AcademyRole;
@@ -67,29 +69,79 @@ const roleKPIs: Record<AcademyRole, Array<{
     { title: "Avg Response Time", value: "1.2h", change: "-20m", changeType: "positive", icon: Calendar, subtitle: "vs SLA target" },
     { title: "Satisfaction Score", value: "4.8", change: "+0.2", changeType: "positive", icon: GraduationCap, subtitle: "out of 5.0" },
     { title: "Resolution Rate", value: "89%", change: "+5%", changeType: "positive", icon: Users, subtitle: "first contact" }
-  ]
+  ],
 }
 
-export default function Dashboard({ currentUserRole = "ops_manager" }: DashboardProps) {
-  const widgets = getWidgetsForRole(currentUserRole)
-  const aiAgents = getAIAgentsForRole(currentUserRole)
-  const kpis = roleKPIs[currentUserRole] || roleKPIs.ops_manager
+export default function Dashboard({ currentUserRole }: DashboardProps) {
+  const { profile, profileLoading } = useAuth();
+  
+  // Use profile role if available, otherwise use prop or default
+  const effectiveRole = profile?.role || currentUserRole || "user";
+  const widgets = getWidgetsForRole(effectiveRole);
+  const aiAgents = getAIAgentsForRole(effectiveRole);
+  const kpis = roleKPIs[effectiveRole] || roleKPIs.ops_manager;
 
   const renderAIAgent = (agent: string) => {
     switch (agent) {
       case "crm_agent":
-        return <CRMAgent key="crm" currentUserRole={currentUserRole} />
+        return <CRMAgent key="crm" currentUserRole={effectiveRole} />
       case "compliance_agent":
-        return <ComplianceAgent key="compliance" currentUserRole={currentUserRole} />
+        return <ComplianceAgent key="compliance" currentUserRole={effectiveRole} />
       case "finance_agent":
-        return <FinanceAgent key="finance" currentUserRole={currentUserRole} />
+        return <FinanceAgent key="finance" currentUserRole={effectiveRole} />
       case "support_copilot":
-        return <SupportCopilot key="support" currentUserRole={currentUserRole} />
+        return <SupportCopilot key="support" currentUserRole={effectiveRole} />
       case "maintenance_planner":
         return null // MaintenancePlanner is context-specific and used in Fleet page
       default:
         return null
     }
+  }
+
+  // Show skeleton loading for KPIs while profile loads
+  if (profileLoading && !profile) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-4" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-1" />
+                <Skeleton className="h-3 w-20" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-40" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {[1, 2].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-4">
+                  <Skeleton className="h-4 w-32 mb-2" />
+                  <Skeleton className="h-3 w-48 mb-1" />
+                  <Skeleton className="h-3 w-24" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -98,24 +150,18 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {currentUserRole === "admin" ? "Admin Dashboard" :
-             currentUserRole === "ops_manager" ? "Operations Dashboard" :
-             currentUserRole === "maintenance_officer" ? "Maintenance Dashboard" :
-             currentUserRole === "compliance_officer" ? "Compliance Dashboard" :
-             currentUserRole === "accounts_officer" ? "Finance Dashboard" :
-             currentUserRole === "marketing_crm" ? "Marketing & CRM Dashboard" :
-             currentUserRole === "support" ? "Support Dashboard" :
+            {effectiveRole === "admin" ? "Admin Dashboard" :
+             effectiveRole === "ops_manager" ? "Operations Dashboard" :
+             effectiveRole === "maintenance_officer" ? "Maintenance Dashboard" :
+             effectiveRole === "compliance_officer" ? "Compliance Dashboard" :
+             effectiveRole === "accounts_officer" ? "Finance Dashboard" :
+             effectiveRole === "marketing_crm" ? "Marketing & CRM Dashboard" :
+             effectiveRole === "support" ? "Support Dashboard" :
              "Dashboard"}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {currentUserRole === "admin" ? "Organization overview and system management" :
-             currentUserRole === "ops_manager" ? "Flight training operations overview" :
-             currentUserRole === "maintenance_officer" ? "Aircraft maintenance and fleet status" :
-             currentUserRole === "compliance_officer" ? "Regulatory compliance and documentation" :
-             currentUserRole === "accounts_officer" ? "Financial overview and billing management" :
-             currentUserRole === "marketing_crm" ? "Lead management and marketing campaigns" :
-             currentUserRole === "support" ? "Customer support and assistance" :
-             "Flight training operations overview"}
+            {profile ? `Welcome back, ${profile.name || profile.email?.split('@')[0] || 'User'}!` : 'Flight training operations overview'}
+            {profileLoading && " (Loading profile...)"}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -155,7 +201,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
         </h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {currentUserRole === "ops_manager" && (
+          {effectiveRole === "ops_manager" && (
             <>
               <AlertCard
                 type="warning"
@@ -172,7 +218,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "maintenance_officer" && (
+          {effectiveRole === "maintenance_officer" && (
             <>
               <AlertCard
                 type="warning"
@@ -189,7 +235,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "compliance_officer" && (
+          {effectiveRole === "compliance_officer" && (
             <>
               <AlertCard
                 type="warning"
@@ -206,7 +252,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "accounts_officer" && (
+          {effectiveRole === "accounts_officer" && (
             <>
               <AlertCard
                 type="warning"
@@ -223,7 +269,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "marketing_crm" && (
+          {effectiveRole === "marketing_crm" && (
             <>
               <AlertCard
                 type="success"
@@ -240,7 +286,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "support" && (
+          {effectiveRole === "support" && (
             <>
               <AlertCard
                 type="warning"
@@ -257,7 +303,7 @@ export default function Dashboard({ currentUserRole = "ops_manager" }: Dashboard
             </>
           )}
           
-          {currentUserRole === "admin" && (
+          {effectiveRole === "admin" && (
             <>
               <AlertCard
                 type="success"
