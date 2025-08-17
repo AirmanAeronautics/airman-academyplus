@@ -31,13 +31,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   // Check if user has a profile and organization access
   if (profile) {
-    // If user has no org_id or status is pending, show pending approval
-    if (!profile.org_id || profile.status === 'pending') {
+    // If user has no org_id, show pending approval
+    if (!profile.org_id) {
       return <PendingApproval />;
     }
     
-    // If user is active and has org access, show the protected content
-    if (profile.status === 'active' && profile.org_id) {
+    // If user has org access, show the protected content
+    if (profile.org_id) {
       return <>{children}</>;
     }
   }

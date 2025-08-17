@@ -66,10 +66,9 @@ export default function PendingRequests() {
           .from('profiles')
           .update({
             org_id: profile.org_id,
-            role: 'user',
-            status: 'active'
+            role: 'user'
           })
-          .eq('user_id', userId);
+          .eq('id', userId);
 
         if (profileError) throw profileError;
 
@@ -83,14 +82,6 @@ export default function PendingRequests() {
             type: 'success'
           });
       } else {
-        // Update profile status to denied
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ status: 'denied' })
-          .eq('user_id', userId);
-
-        if (profileError) throw profileError;
-
         // Send denial notification
         await supabase
           .from('notifications')

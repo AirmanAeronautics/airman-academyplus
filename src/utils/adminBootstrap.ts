@@ -65,8 +65,7 @@ export async function promoteToSuperAdmin(email: string, orgName: string, orgDom
       .from('profiles')
       .update({
         org_id: org.id,
-        role: 'super_admin',
-        status: 'active'
+        role: 'super_admin'
       })
       .eq('id', profile.id);
 
@@ -131,7 +130,7 @@ export async function showCurrentUserInfo() {
         *,
         organization:organizations(*)
       `)
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single();
 
     console.log('👤 Current User Info:');
@@ -141,7 +140,7 @@ export async function showCurrentUserInfo() {
     if (profile) {
       console.log('  Profile ID:', profile.id);
       console.log('  Role:', profile.role);
-      console.log('  Status:', profile.status);
+      console.log('  Role Status:', profile.role);
       console.log('  Org ID:', profile.org_id);
       
       if (profile.organization) {

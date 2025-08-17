@@ -34,16 +34,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshProfile = async () => {
     if (!user) return;
     
-    const { data } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        organization:organizations(*)
-      `)
-      .eq('user_id', user.id)
-      .single();
-    
-    setProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          organization:organizations(*)
+        `)
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
+      }
+      
+      setProfile(data);
+    } catch (error) {
+      console.error('Error in refreshProfile:', error);
+    }
   };
 
   useEffect(() => {
@@ -55,9 +64,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (session?.user) {
           // Fetch user profile when user logs in
-          setTimeout(() => {
-            refreshProfile();
-          }, 0);
+          setTimeout(async () => {
+            await refreshProfile();
+          }, 100);
         } else {
           setProfile(null);
         }
@@ -72,7 +81,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        refreshProfile();
+        setTimeout(async () => {
+          await refreshProfile();
+        }, 100);
       }
       
       setLoading(false);

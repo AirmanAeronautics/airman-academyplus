@@ -127,9 +127,9 @@ export async function publish(event: Event) {
   try {
     // Insert into event_log
     await supabase.from("event_log").insert({
-      action: event.type,
+      type: event.type,
       category: event.category,
-      description: event.message,
+      message: event.message,
       metadata: event.metadata ?? {},
       user_id: event.user_id ?? null,
       org_id: event.org_id,
