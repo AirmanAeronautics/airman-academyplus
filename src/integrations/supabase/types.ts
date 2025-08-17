@@ -16,39 +16,48 @@ export type Database = {
     Tables: {
       event_log: {
         Row: {
-          action: string
           category: string
           created_at: string
-          description: string | null
           id: string
+          message: string | null
           metadata: Json | null
           org_id: string
+          type: string
           user_id: string | null
         }
         Insert: {
-          action: string
           category: string
           created_at?: string
-          description?: string | null
           id?: string
+          message?: string | null
           metadata?: Json | null
           org_id: string
+          type: string
           user_id?: string | null
         }
         Update: {
-          action?: string
           category?: string
           created_at?: string
-          description?: string | null
           id?: string
+          message?: string | null
           metadata?: Json | null
           org_id?: string
+          type?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "event_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
+          body: string | null
           category: string | null
           created_at: string
           id: string
@@ -57,9 +66,10 @@ export type Database = {
           read: boolean | null
           title: string
           type: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
+          body?: string | null
           category?: string | null
           created_at?: string
           id?: string
@@ -68,9 +78,10 @@ export type Database = {
           read?: boolean | null
           title: string
           type: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
+          body?: string | null
           category?: string | null
           created_at?: string
           id?: string
@@ -79,9 +90,17 @@ export type Database = {
           read?: boolean | null
           title?: string
           type?: string
-          user_id?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       org_invites: {
         Row: {
@@ -200,22 +219,25 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
-          domain: string
+          domain: string | null
           id: string
+          is_default: boolean | null
           name: string
           updated_at: string
         }
         Insert: {
           created_at?: string
-          domain: string
+          domain?: string | null
           id?: string
+          is_default?: boolean | null
           name: string
           updated_at?: string
         }
         Update: {
           created_at?: string
-          domain?: string
+          domain?: string | null
           id?: string
+          is_default?: boolean | null
           name?: string
           updated_at?: string
         }
@@ -223,37 +245,28 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string
-          email: string
-          full_name: string | null
+          created_at: string | null
+          email: string | null
           id: string
+          name: string | null
           org_id: string | null
           role: string | null
-          status: string | null
-          updated_at: string
-          user_id: string
         }
         Insert: {
-          created_at?: string
-          email: string
-          full_name?: string | null
-          id?: string
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
           org_id?: string | null
           role?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id: string
         }
         Update: {
-          created_at?: string
-          email?: string
-          full_name?: string | null
+          created_at?: string | null
+          email?: string | null
           id?: string
+          name?: string | null
           org_id?: string | null
           role?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id?: string
         }
         Relationships: [
           {
