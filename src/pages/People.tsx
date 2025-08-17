@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Search, Filter, GraduationCap, Calendar, Clock, BookOpen, Plane, MessageSquare, BarChart3, Bot } from "lucide-react"
+import { Search, Filter, GraduationCap, Calendar, Clock, BookOpen, Plane, MessageSquare, BarChart3, Bot, UserCheck } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,11 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 
-const students = [
+const pilots = [
+  // Students
   {
     id: 1,
     name: "Sarah Wilson",
     avatar: "/placeholder.svg",
+    type: "student",
     course: "Commercial Pilot License",
     stage: "Cross Country Phase",
     progress: 78,
@@ -26,6 +28,7 @@ const students = [
     id: 2,
     name: "Marcus Chen",
     avatar: "/placeholder.svg",
+    type: "student",
     course: "Private Pilot License",
     stage: "Solo Phase",
     progress: 45,
@@ -39,6 +42,7 @@ const students = [
     id: 3,
     name: "Lisa Rodriguez",
     avatar: "/placeholder.svg",
+    type: "student",
     course: "Instrument Rating",
     stage: "IFR Procedures",
     progress: 67,
@@ -47,25 +51,71 @@ const students = [
     instructor: "CFII David Brown",
     status: "active",
     aiInsights: "Excelling in instrument approaches, ready for complex weather scenarios"
+  },
+  // Instructors
+  {
+    id: 4,
+    name: "Capt. James Miller",
+    avatar: "/placeholder.svg",
+    type: "instructor",
+    course: "Flight Instructor",
+    stage: "Active Instructor",
+    progress: 100,
+    hoursFlown: 2450.0,
+    nextLesson: "2024-01-15 09:00",
+    instructor: "Senior Instructor",
+    status: "active",
+    aiInsights: "Excellent teaching record with 95% first-time pass rate"
+  },
+  {
+    id: 5,
+    name: "FI Emma Thompson",
+    avatar: "/placeholder.svg",
+    type: "instructor",
+    course: "Flight Instructor",
+    stage: "Active Instructor",
+    progress: 100,
+    hoursFlown: 1850.0,
+    nextLesson: "2024-01-15 14:00",
+    instructor: "Check Pilot",
+    status: "active",
+    aiInsights: "Specialized in PPL training with strong student progress rates"
+  },
+  {
+    id: 6,
+    name: "CFII David Brown",
+    avatar: "/placeholder.svg",
+    type: "instructor",
+    course: "Instrument Flight Instructor",
+    stage: "Active CFII",
+    progress: 100,
+    hoursFlown: 3200.0,
+    nextLesson: "2024-01-16 10:30",
+    instructor: "Chief Flight Instructor",
+    status: "active",
+    aiInsights: "Expert in instrument training with advanced weather flying experience"
   }
 ]
 
 export default function People() {
-  const [selectedStudent, setSelectedStudent] = useState(students[0])
+  const [selectedPilot, setSelectedPilot] = useState(pilots[0])
   const [searchTerm, setSearchTerm] = useState("")
   const [showAIInsights, setShowAIInsights] = useState(false)
+  const [filterType, setFilterType] = useState("all")
 
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.course.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredPilots = pilots.filter(pilot => {
+    const matchesSearch = pilot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pilot.course.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === "all" || pilot.type === filterType
+    return matchesSearch && matchesType
+  })
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">People</h1>
+          <h1 className="text-3xl font-bold text-foreground">Pilots</h1>
           <p className="text-muted-foreground mt-1">Students and instructors directory (read-only)</p>
         </div>
         <Button className="bg-primary hover:bg-primary-dark">
@@ -75,49 +125,74 @@ export default function People() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Students List */}
+        {/* Pilots List */}
         <div className="space-y-4">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search students..."
+                placeholder="Search pilots..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
+            <Button 
+              variant={filterType === "all" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setFilterType("all")}
+            >
+              All
+            </Button>
+            <Button 
+              variant={filterType === "student" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setFilterType("student")}
+            >
+              <GraduationCap className="h-4 w-4 mr-1" />
+              Students
+            </Button>
+            <Button 
+              variant={filterType === "instructor" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setFilterType("instructor")}
+            >
+              <UserCheck className="h-4 w-4 mr-1" />
+              Instructors
             </Button>
           </div>
 
           <div className="space-y-3">
-            {filteredStudents.map((student) => (
+            {filteredPilots.map((pilot) => (
               <Card
-                key={student.id}
+                key={pilot.id}
                 className={`cursor-pointer transition-all aviation-card hover:aviation-card-elevated ${
-                  selectedStudent.id === student.id ? 'ring-2 ring-primary' : ''
+                  selectedPilot.id === pilot.id ? 'ring-2 ring-primary' : ''
                 }`}
-                onClick={() => setSelectedStudent(student)}
+                onClick={() => setSelectedPilot(pilot)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
                     <Avatar>
-                      <AvatarImage src={student.avatar} />
-                      <AvatarFallback>{student.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      <AvatarImage src={pilot.avatar} />
+                      <AvatarFallback>{pilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{student.name}</p>
-                      <p className="text-sm text-muted-foreground truncate">{student.course}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-foreground truncate">{pilot.name}</p>
+                        <Badge variant={pilot.type === "instructor" ? "default" : "secondary"} className="text-xs">
+                          {pilot.type === "instructor" ? "Instructor" : "Student"}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">{pilot.course}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <div className={`status-${student.status === 'active' ? 'active' : 'inactive'}`} />
-                        <span className="text-xs text-muted-foreground">{student.stage}</span>
+                        <div className={`status-${pilot.status === 'active' ? 'active' : 'inactive'}`} />
+                        <span className="text-xs text-muted-foreground">{pilot.stage}</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">{student.progress}%</p>
-                      <Progress value={student.progress} className="w-16 h-1" />
+                      <p className="text-sm font-medium">{pilot.type === "instructor" ? `${pilot.hoursFlown}h` : `${pilot.progress}%`}</p>
+                      {pilot.type === "student" && <Progress value={pilot.progress} className="w-16 h-1" />}
                     </div>
                   </div>
                 </CardContent>
@@ -126,19 +201,24 @@ export default function People() {
           </div>
         </div>
 
-        {/* Student Details */}
+        {/* Pilot Details */}
         <div className="lg:col-span-2">
           <Card className="aviation-card">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={selectedStudent.avatar} />
-                    <AvatarFallback>{selectedStudent.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    <AvatarImage src={selectedPilot.avatar} />
+                    <AvatarFallback>{selectedPilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle>{selectedStudent.name}</CardTitle>
-                    <CardDescription>{selectedStudent.course} • {selectedStudent.stage}</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      {selectedPilot.name}
+                      <Badge variant={selectedPilot.type === "instructor" ? "default" : "secondary"}>
+                        {selectedPilot.type === "instructor" ? "Instructor" : "Student"}
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>{selectedPilot.course} • {selectedPilot.stage}</CardDescription>
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
@@ -148,7 +228,7 @@ export default function People() {
               
               {showAIInsights && (
                 <div className="mt-4 p-3 bg-accent rounded-lg border border-primary/20">
-                  <p className="text-sm text-accent-foreground">{selectedStudent.aiInsights}</p>
+                  <p className="text-sm text-accent-foreground">{selectedPilot.aiInsights}</p>
                 </div>
               )}
             </CardHeader>
@@ -166,19 +246,19 @@ export default function People() {
                 <TabsContent value="profile" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <h4 className="font-medium">Training Details</h4>
+                      <h4 className="font-medium">{selectedPilot.type === "instructor" ? "Instructor Details" : "Training Details"}</h4>
                       <div className="space-y-1 text-sm">
-                        <p><span className="text-muted-foreground">Course:</span> {selectedStudent.course}</p>
-                        <p><span className="text-muted-foreground">Current Stage:</span> {selectedStudent.stage}</p>
-                        <p><span className="text-muted-foreground">Instructor:</span> {selectedStudent.instructor}</p>
-                        <p><span className="text-muted-foreground">Hours Flown:</span> {selectedStudent.hoursFlown}</p>
+                        <p><span className="text-muted-foreground">Course:</span> {selectedPilot.course}</p>
+                        <p><span className="text-muted-foreground">Current Stage:</span> {selectedPilot.stage}</p>
+                        <p><span className="text-muted-foreground">{selectedPilot.type === "instructor" ? "Specialty" : "Instructor"}:</span> {selectedPilot.instructor}</p>
+                        <p><span className="text-muted-foreground">Hours Flown:</span> {selectedPilot.hoursFlown}</p>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <h4 className="font-medium">Next Session</h4>
                       <div className="space-y-1 text-sm">
-                        <p><span className="text-muted-foreground">Date:</span> {selectedStudent.nextLesson}</p>
-                        <p><span className="text-muted-foreground">Type:</span> Dual Instruction</p>
+                        <p><span className="text-muted-foreground">Date:</span> {selectedPilot.nextLesson}</p>
+                        <p><span className="text-muted-foreground">Type:</span> {selectedPilot.type === "instructor" ? "Teaching" : "Dual Instruction"}</p>
                         <p><span className="text-muted-foreground">Aircraft:</span> C172 G-ABCD</p>
                       </div>
                     </div>
@@ -192,8 +272,8 @@ export default function People() {
                         <div className="flex items-center space-x-2">
                           <BookOpen className="h-5 w-5 text-primary" />
                           <div>
-                            <p className="text-sm font-medium">Theory Progress</p>
-                            <p className="text-2xl font-bold">{selectedStudent.progress - 5}%</p>
+                            <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Teaching Rating" : "Theory Progress"}</p>
+                            <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "A+" : `${selectedPilot.progress - 5}%`}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -204,7 +284,7 @@ export default function People() {
                           <Plane className="h-5 w-5 text-primary" />
                           <div>
                             <p className="text-sm font-medium">Flight Hours</p>
-                            <p className="text-2xl font-bold">{selectedStudent.hoursFlown}</p>
+                            <p className="text-2xl font-bold">{selectedPilot.hoursFlown}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -214,8 +294,8 @@ export default function People() {
                         <div className="flex items-center space-x-2">
                           <BarChart3 className="h-5 w-5 text-primary" />
                           <div>
-                            <p className="text-sm font-medium">Overall Progress</p>
-                            <p className="text-2xl font-bold">{selectedStudent.progress}%</p>
+                            <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Student Success Rate" : "Overall Progress"}</p>
+                            <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "95%" : `${selectedPilot.progress}%`}</p>
                           </div>
                         </div>
                       </CardContent>

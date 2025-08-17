@@ -101,17 +101,10 @@ const navigationItems: NavItem[] = [
     roles: ["admin", "ops_manager"],
   },
   {
-    // Read-only viewers synced from Captain/Maverick
-    title: "Students",
-    url: "/students",
+    title: "Pilots",
+    url: "/people",
     icon: Users,
     roles: ["admin", "ops_manager", "compliance_officer", "accounts_officer", "marketing_crm", "support"],
-  },
-  {
-    title: "Instructors",
-    url: "/instructors",
-    icon: Users,
-    roles: ["admin", "ops_manager", "compliance_officer", "marketing_crm", "support"],
   },
   {
     title: "Fleet & Maintenance",
