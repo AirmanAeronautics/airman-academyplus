@@ -95,7 +95,27 @@ export default function Auth() {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        handleAuthError(error);
+        
+        // Log signup error for debugging
+        try {
+          await supabase.from('event_log').insert([{
+            type: 'signup_client_error',
+            category: 'auth',
+            message: 'Client-side signup error',
+            org_id: '00000000-0000-0000-0000-000000000000', // Default for auth errors
+            metadata: { 
+              email, 
+              error: error.message,
+              error_code: error.status 
+            }
+          }]);
+        } catch (logError) {
+          console.warn('Failed to log signup error:', logError);
+        }
+        return;
+      }
 
       toast({
         title: "Check your email",
@@ -103,6 +123,22 @@ export default function Auth() {
       });
     } catch (error: any) {
       handleAuthError(error);
+      
+      // Log unexpected errors
+      try {
+        await supabase.from('event_log').insert([{
+          type: 'signup_unexpected_error',
+          category: 'auth',
+          message: 'Unexpected signup error',
+          org_id: '00000000-0000-0000-0000-000000000000', // Default for auth errors
+          metadata: { 
+            email,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          }
+        }]);
+      } catch (logError) {
+        console.warn('Failed to log unexpected error:', logError);
+      }
     } finally {
       setLoading(false);
     }
@@ -123,7 +159,27 @@ export default function Auth() {
           }
         });
         
-        if (error) throw error;
+        if (error) {
+          handleAuthError(error);
+          
+          // Log magic link error
+          try {
+            await supabase.from('event_log').insert([{
+              type: 'signin_magic_link_error',
+              category: 'auth',
+              message: 'Magic link signin error',
+              org_id: '00000000-0000-0000-0000-000000000000', // Default for auth errors
+              metadata: { 
+                email, 
+                error: error.message,
+                error_code: error.status
+              }
+            }]);
+          } catch (logError) {
+            console.warn('Failed to log magic link error:', logError);
+          }
+          return;
+        }
         
         toast({
           title: "Check your email",
@@ -132,18 +188,54 @@ export default function Auth() {
       } else {
         const { error } = await signInWithPassword(email, password);
 
-        if (error) throw error;
+        if (error) {
+          handleAuthError(error);
+          
+          // Log signin error for debugging
+          try {
+            await supabase.from('event_log').insert([{
+              type: 'signin_client_error',
+              category: 'auth',
+              message: 'Client-side signin error',
+              org_id: '00000000-0000-0000-0000-000000000000', // Default for auth errors
+              metadata: { 
+                email, 
+                error: error.message,
+                error_code: error.status
+              }
+            }]);
+          } catch (logError) {
+            console.warn('Failed to log signin error:', logError);
+          }
+          return;
+        }
 
         toast({
           title: "Welcome back!",
           description: "You've been successfully signed in.",
         });
         
-        // Immediate redirect - no waiting for profile
+        // Immediate redirect - onboarding happens in useAuth
         navigate('/');
       }
     } catch (error: any) {
       handleAuthError(error);
+      
+      // Log unexpected errors
+      try {
+        await supabase.from('event_log').insert([{
+          type: 'signin_unexpected_error',
+          category: 'auth',
+          message: 'Unexpected signin error',
+          org_id: '00000000-0000-0000-0000-000000000000', // Default for auth errors
+          metadata: { 
+            email,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          }
+        }]);
+      } catch (logError) {
+        console.warn('Failed to log unexpected error:', logError);
+      }
     } finally {
       setLoading(false);
     }
