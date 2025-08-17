@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { logAIAction } from "@/lib/eventBus"
+import { logAIAction, publish } from "@/lib/eventBus"
 import { invoices, scheduleEvents, students } from "@/data/seeds"
 import { exportFinanceReport } from "@/lib/exports"
 import type { AcademyRole, Invoice } from "@/types"
@@ -102,7 +102,7 @@ export function FinanceAgent({ currentUserRole, onInvoiceUpdate }: FinanceAgentP
     )
   }
 
-  const generateInvoicesFromFlights = () => {
+  const generateInvoicesFromFlights = async () => {
     const unbilledFlights = scheduleEvents.filter(event => {
       const eventDate = new Date(event.start_time)
       const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
@@ -167,6 +167,15 @@ export function FinanceAgent({ currentUserRole, onInvoiceUpdate }: FinanceAgentP
       "ai_agent",
       currentUserRole
     )
+
+    // Publish categorized notification
+    await publish({
+      type: "Finance Invoice Generation",
+      message: `AI generated ${newInvoices.length} invoices totaling £${newInvoices.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}`,
+      metadata: { invoiceCount: newInvoices.length, totalAmount: newInvoices.reduce((sum, inv) => sum + inv.amount, 0) },
+      org_id: "org_airman_academy",
+      category: "finance"
+    })
   }
 
   const applyGeneratedInvoices = () => {

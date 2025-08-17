@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { logAIAction } from "@/lib/eventBus"
+import { logAIAction, publish } from "@/lib/eventBus"
 import { leads } from "@/data/seeds"
 import type { Lead, AcademyRole } from "@/types"
 
@@ -101,6 +101,15 @@ export function CRMAgent({ currentUserRole, onLeadUpdate }: CRMAgentProps) {
       "ai_agent",
       currentUserRole
     )
+
+    // Publish categorized notification
+    await publish({
+      type: "CRM Lead Scoring",
+      message: `AI scored ${scoredLeads.length} leads: ${hotLeads} hot, ${warmLeads} warm, ${coldLeads} cold`,
+      metadata: { leadsCount: scoredLeads.length, hotLeads, warmLeads, coldLeads },
+      org_id: "org_airman_academy",
+      category: "marketing"
+    })
   }
 
   const generateOutreach = (segment: "hot" | "warm" | "cold") => {

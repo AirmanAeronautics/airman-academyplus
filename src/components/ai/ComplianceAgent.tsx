@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { logAIAction } from "@/lib/eventBus"
+import { logAIAction, publish } from "@/lib/eventBus"
 import { students, instructors } from "@/data/seeds"
 import { exportComplianceReport } from "@/lib/exports"
 import type { AcademyRole } from "@/types"
@@ -118,6 +118,15 @@ export function ComplianceAgent({ currentUserRole }: ComplianceAgentProps) {
       "ai_agent",
       currentUserRole
     )
+
+    // Publish categorized notification
+    await publish({
+      type: "Compliance Report",
+      message: `AI generated compliance report: ${complianceScore}% compliance rate, ${report.criticalIssues.length} critical issues`,
+      metadata: { complianceScore, criticalIssues: report.criticalIssues.length },
+      org_id: "org_airman_academy", 
+      category: "compliance"
+    })
   }
 
   const exportReport = () => {

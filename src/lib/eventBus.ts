@@ -1,7 +1,21 @@
 // AIRMAN Academy+ Event Bus
-// Simple in-memory event system for AI actions and state changes
+// Event system for AI actions with Supabase integration
 
 import type { EventLog, AcademyRole } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+
+export type NotificationCategory = "scheduler" | "maintenance" | "compliance" | "finance" | "support" | "marketing" | "system";
+
+export type Event = {
+  id?: string;
+  type: string;
+  message: string;
+  metadata?: Record<string, any>;
+  user_id?: string;
+  org_id: string;
+  category: NotificationCategory;
+  created_at?: string;
+};
 
 interface EventBusPayload {
   [key: string]: any;
@@ -43,6 +57,10 @@ class EventBus {
 
   getEvents(): EventLog[] {
     return [...this.events].reverse(); // Most recent first
+  }
+
+  notifyListeners(event: EventLog): void {
+    this.listeners.forEach(listener => listener(event));
   }
 
   private generateSummary(type: string, payload: EventBusPayload): string {
@@ -87,3 +105,47 @@ export const logAIAction = (
 ) => {
   eventBus.push(type, payload, userId, role);
 };
+
+// New publish function for Supabase integration
+export async function publish(event: Event) {
+  // Notify in-memory handlers
+  const eventLog: EventLog = {
+    id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    org_id: event.org_id,
+    campus_id: "campus_main",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    type: event.type,
+    summary: event.message,
+    details: event.metadata || {},
+    user_id: event.user_id,
+    role: undefined
+  };
+  
+  eventBus.notifyListeners(eventLog);
+
+  try {
+    // Insert into event_log
+    await supabase.from("event_log").insert({
+      action: event.type,
+      category: event.category,
+      description: event.message,
+      metadata: event.metadata ?? {},
+      user_id: event.user_id ?? null,
+      org_id: event.org_id,
+    });
+
+    // Insert into notifications with category
+    await supabase.from("notifications").insert({
+      title: `AI Agent: ${event.type}`,
+      message: event.message,
+      user_id: event.user_id ?? null,
+      org_id: event.org_id,
+      category: event.category,
+      read: false,
+      type: "info"
+    });
+  } catch (error) {
+    console.error("Failed to publish event:", error);
+  }
+}

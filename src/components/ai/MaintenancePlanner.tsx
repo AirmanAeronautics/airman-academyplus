@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { logAIAction } from "@/lib/eventBus";
+import { logAIAction, publish } from "@/lib/eventBus";
 import type { Aircraft } from "@/types";
 
 interface MaintenanceTask {
@@ -125,6 +125,15 @@ export function MaintenancePlanner({ aircraft, onCreateTasks, currentUser }: Mai
       tasksGenerated: tasks.length,
       totalEstimatedHours: tasks.reduce((sum, task) => sum + task.estimated_hours, 0)
     }, currentUser?.id, currentUser?.role as any);
+
+    // Publish categorized notification
+    await publish({
+      type: "Maintenance Planning", 
+      message: `AI planned maintenance for ${aircraft.registration}: ${tasks.length} tasks generated`,
+      metadata: { aircraft: aircraft.registration, tasksGenerated: tasks.length },
+      org_id: "org_airman_academy",
+      category: "maintenance"
+    });
   };
 
   const handleCreateTasks = () => {
