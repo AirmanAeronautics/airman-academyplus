@@ -43,7 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .from('profiles')
         .select(`
           *,
-          organization:organizations(*)
+          organizations!inner(*)
         `)
         .eq('id', user.id)
         .maybeSingle();
