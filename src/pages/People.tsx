@@ -9,8 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { StudentProgressDashboard } from "@/components/progress/StudentProgressDashboard"
 import { StudentReadinessDashboard } from "@/components/instructor/StudentReadinessDashboard"
+import { RoleGuard } from "@/components/access/RoleGuard"
 import { MILESTONES_PPL, AVAILABLE_BADGES } from "@/types/progress"
 import { useAuth } from "@/hooks/useAuth"
+import { getUserPermissions, getRoleDisplayName } from "@/lib/roleUtils"
 
 const pilots = [
   // Students
@@ -108,6 +110,9 @@ export default function People() {
   const [showAIInsights, setShowAIInsights] = useState(false)
   const [filterType, setFilterType] = useState("all")
   const [activeTab, setActiveTab] = useState("directory")
+  
+  const userRole = profile?.role
+  const permissions = getUserPermissions(userRole)
 
   // Mock student progress data
   const mockStudentProgress = {
@@ -142,8 +147,6 @@ export default function People() {
     console.log("Generating AI debrief for student:", selectedPilot.name)
   }
 
-  const isInstructor = profile?.role && ["instructor", "admin", "ops_manager"].includes(profile.role)
-
   const filteredPilots = pilots.filter(pilot => {
     const matchesSearch = pilot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pilot.course.toLowerCase().includes(searchTerm.toLowerCase())
@@ -152,291 +155,307 @@ export default function People() {
   })
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">People & Progress</h1>
-          <p className="text-muted-foreground mt-1">Student progress tracking and instructor dashboard</p>
+    <RoleGuard requirePermission="canAccessPeopleDirectory">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">People & Progress</h1>
+            <p className="text-muted-foreground mt-1">
+              {permissions.isInstructor 
+                ? "Manage your students and track their progress" 
+                : permissions.isStudent 
+                ? "View training directory and connect with instructors"
+                : "Flight training personnel directory"
+              }
+            </p>
+          </div>
+          {permissions.canManageStudentData && (
+            <Button className="bg-primary hover:bg-primary-dark">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Send Notice to Captain
+            </Button>
+          )}
         </div>
-        <Button className="bg-primary hover:bg-primary-dark">
-          <MessageSquare className="h-4 w-4 mr-2" />
-          Send Notice to Captain
-        </Button>
-      </div>
 
-      {/* Main Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="directory">Directory</TabsTrigger>
-          <TabsTrigger value="student-progress">Student Progress</TabsTrigger>
-          <TabsTrigger value="instructor-dashboard">Readiness Dashboard</TabsTrigger>
-        </TabsList>
+        {/* Main Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className={`grid w-full ${permissions.canViewStudentProgress ? 'grid-cols-3' : 'grid-cols-1'}`}>
+            <TabsTrigger value="directory">
+              {permissions.isStudent ? "Training Directory" : "Directory"}
+            </TabsTrigger>
+            {permissions.canViewStudentProgress && (
+              <>
+                <TabsTrigger value="student-progress">Student Progress</TabsTrigger>
+                <TabsTrigger value="instructor-dashboard">Readiness Dashboard</TabsTrigger>
+              </>
+            )}
+          </TabsList>
 
-        <TabsContent value="directory" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Pilots List */}
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search pilots..."
-                    className="pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+          <TabsContent value="directory" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Pilots List */}
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search pilots..."
+                      className="pl-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <Button 
+                    variant={filterType === "all" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setFilterType("all")}
+                  >
+                    All
+                  </Button>
+                  <Button 
+                    variant={filterType === "student" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setFilterType("student")}
+                  >
+                    <GraduationCap className="h-4 w-4 mr-1" />
+                    Students
+                  </Button>
+                  <Button 
+                    variant={filterType === "instructor" ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setFilterType("instructor")}
+                  >
+                    <UserCheck className="h-4 w-4 mr-1" />
+                    Instructors
+                  </Button>
                 </div>
-                <Button 
-                  variant={filterType === "all" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setFilterType("all")}
-                >
-                  All
-                </Button>
-                <Button 
-                  variant={filterType === "student" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setFilterType("student")}
-                >
-                  <GraduationCap className="h-4 w-4 mr-1" />
-                  Students
-                </Button>
-                <Button 
-                  variant={filterType === "instructor" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setFilterType("instructor")}
-                >
-                  <UserCheck className="h-4 w-4 mr-1" />
-                  Instructors
-                </Button>
+
+                <div className="space-y-3">
+                  {filteredPilots.map((pilot) => (
+                    <Card
+                      key={pilot.id}
+                      className={`cursor-pointer transition-all aviation-card hover:aviation-card-elevated ${
+                        selectedPilot.id === pilot.id ? 'ring-2 ring-primary' : ''
+                      }`}
+                      onClick={() => setSelectedPilot(pilot)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3">
+                          <Avatar>
+                            <AvatarImage src={pilot.avatar} />
+                            <AvatarFallback>{pilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-foreground truncate">{pilot.name}</p>
+                              <Badge variant={pilot.type === "instructor" ? "default" : "secondary"} className="text-xs">
+                                {pilot.type === "instructor" ? "Instructor" : "Student"}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground truncate">{pilot.course}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className={`status-${pilot.status === 'active' ? 'active' : 'inactive'}`} />
+                              <span className="text-xs text-muted-foreground">{pilot.stage}</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium">{pilot.type === "instructor" ? `${pilot.hoursFlown}h` : `${pilot.progress}%`}</p>
+                            {pilot.type === "student" && <Progress value={pilot.progress} className="w-16 h-1" />}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-3">
-                {filteredPilots.map((pilot) => (
-                  <Card
-                    key={pilot.id}
-                    className={`cursor-pointer transition-all aviation-card hover:aviation-card-elevated ${
-                      selectedPilot.id === pilot.id ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => setSelectedPilot(pilot)}
-                  >
-                    <CardContent className="p-4">
+              {/* Pilot Details */}
+              <div className="lg:col-span-2">
+                <Card className="aviation-card">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <Avatar>
-                          <AvatarImage src={pilot.avatar} />
-                          <AvatarFallback>{pilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={selectedPilot.avatar} />
+                          <AvatarFallback>{selectedPilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-foreground truncate">{pilot.name}</p>
-                            <Badge variant={pilot.type === "instructor" ? "default" : "secondary"} className="text-xs">
-                              {pilot.type === "instructor" ? "Instructor" : "Student"}
+                        <div>
+                          <CardTitle className="flex items-center gap-2">
+                            {selectedPilot.name}
+                            <Badge variant={selectedPilot.type === "instructor" ? "default" : "secondary"}>
+                              {selectedPilot.type === "instructor" ? "Instructor" : "Student"}
                             </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground truncate">{pilot.course}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <div className={`status-${pilot.status === 'active' ? 'active' : 'inactive'}`} />
-                            <span className="text-xs text-muted-foreground">{pilot.stage}</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">{pilot.type === "instructor" ? `${pilot.hoursFlown}h` : `${pilot.progress}%`}</p>
-                          {pilot.type === "student" && <Progress value={pilot.progress} className="w-16 h-1" />}
+                          </CardTitle>
+                          <CardDescription>{selectedPilot.course} • {selectedPilot.stage}</CardDescription>
                         </div>
                       </div>
+                      <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                        {permissions.isStudent 
+                          ? "Directory view" 
+                          : permissions.canManageStudentData 
+                          ? "Full access" 
+                          : "Read-only view"
+                        }
+                      </div>
+                    </div>
+                    
+                    {showAIInsights && (
+                      <div className="mt-4 p-3 bg-accent rounded-lg border border-primary/20">
+                        <p className="text-sm text-accent-foreground">{selectedPilot.aiInsights}</p>
+                      </div>
+                    )}
+                  </CardHeader>
+
+                  <CardContent>
+                    <Tabs defaultValue="profile" className="w-full">
+                      <TabsList className="grid w-full grid-cols-4">
+                        <TabsTrigger value="profile">Profile</TabsTrigger>
+                        <TabsTrigger value="progress">Progress</TabsTrigger>
+                        <TabsTrigger value="logbook">Logbook</TabsTrigger>
+                        <TabsTrigger value="flight-data">Flight Data</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="profile" className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <h4 className="font-medium">{selectedPilot.type === "instructor" ? "Instructor Details" : "Training Details"}</h4>
+                            <div className="space-y-1 text-sm">
+                              <p><span className="text-muted-foreground">Course:</span> {selectedPilot.course}</p>
+                              <p><span className="text-muted-foreground">Current Stage:</span> {selectedPilot.stage}</p>
+                              <p><span className="text-muted-foreground">{selectedPilot.type === "instructor" ? "Specialty" : "Instructor"}:</span> {selectedPilot.instructor}</p>
+                              <p><span className="text-muted-foreground">Hours Flown:</span> {selectedPilot.hoursFlown}</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <h4 className="font-medium">Next Session</h4>
+                            <div className="space-y-1 text-sm">
+                              <p><span className="text-muted-foreground">Date:</span> {selectedPilot.nextLesson}</p>
+                              <p><span className="text-muted-foreground">Type:</span> {selectedPilot.type === "instructor" ? "Teaching" : "Dual Instruction"}</p>
+                              <p><span className="text-muted-foreground">Aircraft:</span> C172 G-ABCD</p>
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="progress" className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <Card>
+                            <CardContent className="p-4">
+                              <div className="flex items-center space-x-2">
+                                <BookOpen className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Teaching Rating" : "Theory Progress"}</p>
+                                  <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "A+" : `${selectedPilot.progress - 5}%`}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="p-4">
+                              <div className="flex items-center space-x-2">
+                                <Plane className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium">Flight Hours</p>
+                                  <p className="text-2xl font-bold">{selectedPilot.hoursFlown}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardContent className="p-4">
+                              <div className="flex items-center space-x-2">
+                                <BarChart3 className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Student Success Rate" : "Overall Progress"}</p>
+                                  <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "95%" : `${selectedPilot.progress}%`}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="logbook" className="space-y-4">
+                        <div className="space-y-3">
+                          <h4 className="font-medium">Recent Flights</h4>
+                          <div className="space-y-2">
+                            {[
+                              { date: "2024-01-12", aircraft: "C172 G-ABCD", duration: 1.5, type: "Dual", details: "Navigation exercise" },
+                              { date: "2024-01-10", aircraft: "C172 G-EFGH", duration: 1.2, type: "Solo", details: "Local area familiarization" },
+                              { date: "2024-01-08", aircraft: "C172 G-ABCD", duration: 2.0, type: "Dual", details: "Cross country planning" }
+                            ].map((flight, idx) => (
+                              <div key={idx} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                <div>
+                                  <p className="font-medium">{flight.date}</p>
+                                  <p className="text-sm text-muted-foreground">{flight.aircraft} • {flight.type}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-medium">{flight.duration}h</p>
+                                  <p className="text-sm text-muted-foreground">{flight.details}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="flight-data" className="space-y-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Captain/XB-70 Flight Data Analysis</h4>
+                            <Button variant="outline" size="sm" disabled>
+                              <Bot className="h-4 w-4 mr-2" />
+                              Generate AI Debrief
+                            </Button>
+                          </div>
+                          
+                          <Card>
+                            <CardContent className="p-4 text-center">
+                              <p className="text-sm text-muted-foreground">Flight data analysis available after integration with Captain/XB-70 system</p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {permissions.canViewStudentProgress && (
+            <TabsContent value="student-progress" className="space-y-6">
+              <RoleGuard requirePermission="canViewStudentProgress">
+                {selectedPilot.type === "student" ? (
+                  <StudentProgressDashboard 
+                    studentId={selectedPilot.id.toString()}
+                    progress={mockStudentProgress}
+                    onGenerateDebrief={handleGenerateDebrief}
+                    isInstructor={permissions.isInstructor}
+                  />
+                ) : (
+                  <Card>
+                    <CardContent className="flex items-center justify-center py-8">
+                      <p className="text-muted-foreground">
+                        Please select a student to view their progress
+                      </p>
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Pilot Details */}
-            <div className="lg:col-span-2">
-              <Card className="aviation-card">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={selectedPilot.avatar} />
-                        <AvatarFallback>{selectedPilot.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          {selectedPilot.name}
-                          <Badge variant={selectedPilot.type === "instructor" ? "default" : "secondary"}>
-                            {selectedPilot.type === "instructor" ? "Instructor" : "Student"}
-                          </Badge>
-                        </CardTitle>
-                        <CardDescription>{selectedPilot.course} • {selectedPilot.stage}</CardDescription>
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                      Read-only view
-                    </div>
-                  </div>
-                  
-                  {showAIInsights && (
-                    <div className="mt-4 p-3 bg-accent rounded-lg border border-primary/20">
-                      <p className="text-sm text-accent-foreground">{selectedPilot.aiInsights}</p>
-                    </div>
-                  )}
-                </CardHeader>
-
-                <CardContent>
-                  <Tabs defaultValue="profile" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="profile">Profile</TabsTrigger>
-                      <TabsTrigger value="progress">Progress</TabsTrigger>
-                      <TabsTrigger value="logbook">Logbook</TabsTrigger>
-                      <TabsTrigger value="flight-data">Flight Data</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="profile" className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium">{selectedPilot.type === "instructor" ? "Instructor Details" : "Training Details"}</h4>
-                          <div className="space-y-1 text-sm">
-                            <p><span className="text-muted-foreground">Course:</span> {selectedPilot.course}</p>
-                            <p><span className="text-muted-foreground">Current Stage:</span> {selectedPilot.stage}</p>
-                            <p><span className="text-muted-foreground">{selectedPilot.type === "instructor" ? "Specialty" : "Instructor"}:</span> {selectedPilot.instructor}</p>
-                            <p><span className="text-muted-foreground">Hours Flown:</span> {selectedPilot.hoursFlown}</p>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium">Next Session</h4>
-                          <div className="space-y-1 text-sm">
-                            <p><span className="text-muted-foreground">Date:</span> {selectedPilot.nextLesson}</p>
-                            <p><span className="text-muted-foreground">Type:</span> {selectedPilot.type === "instructor" ? "Teaching" : "Dual Instruction"}</p>
-                            <p><span className="text-muted-foreground">Aircraft:</span> C172 G-ABCD</p>
-                          </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="progress" className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-2">
-                              <BookOpen className="h-5 w-5 text-primary" />
-                              <div>
-                                <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Teaching Rating" : "Theory Progress"}</p>
-                                <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "A+" : `${selectedPilot.progress - 5}%`}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-2">
-                              <Plane className="h-5 w-5 text-primary" />
-                              <div>
-                                <p className="text-sm font-medium">Flight Hours</p>
-                                <p className="text-2xl font-bold">{selectedPilot.hoursFlown}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="flex items-center space-x-2">
-                              <BarChart3 className="h-5 w-5 text-primary" />
-                              <div>
-                                <p className="text-sm font-medium">{selectedPilot.type === "instructor" ? "Student Success Rate" : "Overall Progress"}</p>
-                                <p className="text-2xl font-bold">{selectedPilot.type === "instructor" ? "95%" : `${selectedPilot.progress}%`}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="logbook" className="space-y-4">
-                      <div className="space-y-3">
-                        <h4 className="font-medium">Recent Flights</h4>
-                        <div className="space-y-2">
-                          {[
-                            { date: "2024-01-12", aircraft: "C172 G-ABCD", duration: 1.5, type: "Dual", details: "Navigation exercise" },
-                            { date: "2024-01-10", aircraft: "C172 G-EFGH", duration: 1.2, type: "Solo", details: "Local area familiarization" },
-                            { date: "2024-01-08", aircraft: "C172 G-ABCD", duration: 2.0, type: "Dual", details: "Cross country planning" }
-                          ].map((flight, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                              <div>
-                                <p className="font-medium">{flight.date}</p>
-                                <p className="text-sm text-muted-foreground">{flight.aircraft} • {flight.type}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-medium">{flight.duration}h</p>
-                                <p className="text-sm text-muted-foreground">{flight.details}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="flight-data" className="space-y-4">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium">Captain/XB-70 Flight Data Analysis</h4>
-                          <Button variant="outline" size="sm" disabled>
-                            <Bot className="h-4 w-4 mr-2" />
-                            Generate AI Debrief
-                          </Button>
-                        </div>
-                        
-                        <Card>
-                          <CardContent className="p-4 text-center">
-                            <p className="text-sm text-muted-foreground">Flight data analysis available after integration with Captain/XB-70 system</p>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="student-progress">
-          {selectedPilot.type === "student" ? (
-            <StudentProgressDashboard
-              studentId={selectedPilot.id.toString()}
-              progress={mockStudentProgress}
-              onGenerateDebrief={handleGenerateDebrief}
-              isInstructor={isInstructor}
-            />
-          ) : (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-medium mb-2">Select a Student</h3>
-                <p className="text-sm text-muted-foreground">
-                  Please select a student from the directory to view their progress tracking.
-                </p>
-              </CardContent>
-            </Card>
+                )}
+              </RoleGuard>
+            </TabsContent>
           )}
-        </TabsContent>
 
-        <TabsContent value="instructor-dashboard">
-          {isInstructor ? (
-            <StudentReadinessDashboard instructorId={profile?.id || ""} />
-          ) : (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-medium mb-2">Instructor Access Required</h3>
-                <p className="text-sm text-muted-foreground">
-                  This dashboard is only available to flight instructors and administrators.
-                </p>
-              </CardContent>
-            </Card>
+          {permissions.canViewStudentProgress && (
+            <TabsContent value="instructor-dashboard" className="space-y-6">
+              <RoleGuard requirePermission="canViewStudentProgress">
+                <StudentReadinessDashboard instructorId={profile?.id || ""} />
+              </RoleGuard>
+            </TabsContent>
           )}
-        </TabsContent>
-      </Tabs>
-    </div>
+        </Tabs>
+      </div>
+    </RoleGuard>
   )
 }

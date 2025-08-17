@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth"
 // Only Academy staff roles (no student/instructor logins here)
 export type AcademyRole =
   | "admin"
+  | "instructor"
   | "ops_manager"
   | "maintenance_officer"
   | "compliance_officer"
@@ -101,10 +102,10 @@ const navigationItems: NavItem[] = [
     roles: ["admin", "ops_manager"],
   },
   {
-    title: "Pilots",
+    title: "People & Progress",
     url: "/people",
     icon: Users,
-    roles: ["admin", "ops_manager", "compliance_officer", "accounts_officer", "marketing_crm", "support"],
+    roles: ["admin", "instructor"],
   },
   {
     title: "Fleet & Maintenance",

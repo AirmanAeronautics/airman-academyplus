@@ -47,6 +47,69 @@ export type Database = {
         }
         Relationships: []
       }
+      flight_debriefs: {
+        Row: {
+          ai_summary: string | null
+          aircraft_id: string | null
+          created_at: string
+          exceedances: Json | null
+          flight_date: string
+          flight_time: number
+          id: string
+          improvement_areas: Json | null
+          instructor_id: string | null
+          maneuver_scores: Json | null
+          next_steps: string | null
+          org_id: string
+          overall_score: number | null
+          session_id: string
+          strengths: Json | null
+          student_id: string
+          study_recommendations: Json | null
+          updated_at: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          aircraft_id?: string | null
+          created_at?: string
+          exceedances?: Json | null
+          flight_date: string
+          flight_time: number
+          id?: string
+          improvement_areas?: Json | null
+          instructor_id?: string | null
+          maneuver_scores?: Json | null
+          next_steps?: string | null
+          org_id: string
+          overall_score?: number | null
+          session_id: string
+          strengths?: Json | null
+          student_id: string
+          study_recommendations?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          ai_summary?: string | null
+          aircraft_id?: string | null
+          created_at?: string
+          exceedances?: Json | null
+          flight_date?: string
+          flight_time?: number
+          id?: string
+          improvement_areas?: Json | null
+          instructor_id?: string | null
+          maneuver_scores?: Json | null
+          next_steps?: string | null
+          org_id?: string
+          overall_score?: number | null
+          session_id?: string
+          strengths?: Json | null
+          student_id?: string
+          study_recommendations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -269,6 +332,135 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      student_assignments: {
+        Row: {
+          active: boolean
+          assigned_at: string
+          course_type: string
+          created_at: string
+          id: string
+          instructor_id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          assigned_at?: string
+          course_type: string
+          created_at?: string
+          id?: string
+          instructor_id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          assigned_at?: string
+          course_type?: string
+          created_at?: string
+          id?: string
+          instructor_id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      student_badges: {
+        Row: {
+          badge_id: string
+          badge_name: string
+          created_at: string
+          date_earned: string
+          id: string
+          org_id: string
+          student_id: string
+        }
+        Insert: {
+          badge_id: string
+          badge_name: string
+          created_at?: string
+          date_earned?: string
+          id?: string
+          org_id: string
+          student_id: string
+        }
+        Update: {
+          badge_id?: string
+          badge_name?: string
+          created_at?: string
+          date_earned?: string
+          id?: string
+          org_id?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
+      student_progress: {
+        Row: {
+          completed: boolean
+          completion_date: string | null
+          course_type: string
+          created_at: string
+          cross_country_hours: number
+          dual_hours: number
+          id: string
+          instrument_hours: number
+          milestone_id: string
+          night_hours: number
+          org_id: string
+          overall_score: number | null
+          readiness_level: string | null
+          solo_hours: number
+          strong_areas: Json | null
+          student_id: string
+          total_hours: number
+          updated_at: string
+          weak_areas: Json | null
+        }
+        Insert: {
+          completed?: boolean
+          completion_date?: string | null
+          course_type: string
+          created_at?: string
+          cross_country_hours?: number
+          dual_hours?: number
+          id?: string
+          instrument_hours?: number
+          milestone_id: string
+          night_hours?: number
+          org_id: string
+          overall_score?: number | null
+          readiness_level?: string | null
+          solo_hours?: number
+          strong_areas?: Json | null
+          student_id: string
+          total_hours?: number
+          updated_at?: string
+          weak_areas?: Json | null
+        }
+        Update: {
+          completed?: boolean
+          completion_date?: string | null
+          course_type?: string
+          created_at?: string
+          cross_country_hours?: number
+          dual_hours?: number
+          id?: string
+          instrument_hours?: number
+          milestone_id?: string
+          night_hours?: number
+          org_id?: string
+          overall_score?: number | null
+          readiness_level?: string | null
+          solo_hours?: number
+          strong_areas?: Json | null
+          student_id?: string
+          total_hours?: number
+          updated_at?: string
+          weak_areas?: Json | null
+        }
+        Relationships: []
       }
     }
     Views: {
