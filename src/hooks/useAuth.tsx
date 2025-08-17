@@ -42,10 +42,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
           organization:organizations(*)
         `)
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error fetching profile:', error);
+        return;
+      }
+      
+      // If no profile found, wait a bit and retry (for new signups)
+      if (!data) {
+        console.log('No profile found, retrying in 1 second...');
+        setTimeout(async () => {
+          await refreshProfile();
+        }, 1000);
         return;
       }
       
