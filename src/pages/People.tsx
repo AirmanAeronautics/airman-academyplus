@@ -426,32 +426,28 @@ export default function People() {
 
           {permissions.canViewStudentProgress && (
             <TabsContent value="student-progress" className="space-y-6">
-              <RoleGuard requirePermission="canViewStudentProgress">
-                {selectedPilot.type === "student" ? (
-                  <StudentProgressDashboard 
-                    studentId={selectedPilot.id.toString()}
-                    progress={mockStudentProgress}
-                    onGenerateDebrief={handleGenerateDebrief}
-                    isInstructor={permissions.isInstructor}
-                  />
-                ) : (
-                  <Card>
-                    <CardContent className="flex items-center justify-center py-8">
-                      <p className="text-muted-foreground">
-                        Please select a student to view their progress
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </RoleGuard>
+              {selectedPilot.type === "student" ? (
+                <StudentProgressDashboard 
+                  studentId={selectedPilot.id.toString()}
+                  progress={mockStudentProgress}
+                  onGenerateDebrief={handleGenerateDebrief}
+                  isInstructor={permissions.isInstructor}
+                />
+              ) : (
+                <Card>
+                  <CardContent className="flex items-center justify-center py-8">
+                    <p className="text-muted-foreground">
+                      Please select a student to view their progress
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           )}
 
           {permissions.canViewStudentProgress && (
             <TabsContent value="instructor-dashboard" className="space-y-6">
-              <RoleGuard requirePermission="canViewStudentProgress">
-                <StudentReadinessDashboard instructorId={profile?.id || ""} />
-              </RoleGuard>
+              <StudentReadinessDashboard instructorId={profile?.id || ""} />
             </TabsContent>
           )}
         </Tabs>
