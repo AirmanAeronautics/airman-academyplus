@@ -31,10 +31,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshProfile = async () => {
+  const refreshProfile = async (retryCount = 0) => {
     if (!user) return;
     
     try {
+      console.log('Fetching profile for user:', user.id);
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -49,15 +50,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
       
-      // If no profile found, wait a bit and retry (for new signups)
-      if (!data) {
-        console.log('No profile found, retrying in 1 second...');
-        setTimeout(async () => {
-          await refreshProfile();
+      // If no profile found and we haven't retried too many times
+      if (!data && retryCount < 3) {
+        console.log(`No profile found, retrying... (attempt ${retryCount + 1})`);
+        setTimeout(() => {
+          refreshProfile(retryCount + 1);
         }, 1000);
         return;
       }
       
+      if (!data) {
+        console.error('Profile not found after retries');
+        return;
+      }
+      
+      console.log('Profile loaded successfully:', data);
       setProfile(data);
     } catch (error) {
       console.error('Error in refreshProfile:', error);
@@ -73,8 +80,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (session?.user) {
           // Fetch user profile when user logs in
-          setTimeout(async () => {
-            await refreshProfile();
+          setTimeout(() => {
+            refreshProfile();
           }, 100);
         } else {
           setProfile(null);
@@ -90,8 +97,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        setTimeout(async () => {
-          await refreshProfile();
+        setTimeout(() => {
+          refreshProfile();
         }, 100);
       }
       
