@@ -32,10 +32,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   const refreshProfile = async (retryCount = 0) => {
-    if (!user) return;
+    if (!user) {
+      console.log('❌ No user found, cannot fetch profile');
+      return;
+    }
     
     try {
-      console.log('Fetching profile for user:', user.id);
+      console.log('🔄 Fetching profile for user:', user.id, 'attempt:', retryCount + 1);
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -45,14 +48,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .eq('id', user.id)
         .maybeSingle();
       
+      console.log('📊 Profile query result:', { data, error });
+      
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('❌ Error fetching profile:', error);
         return;
       }
       
       // If no profile found and we haven't retried too many times
       if (!data && retryCount < 3) {
-        console.log(`No profile found, retrying... (attempt ${retryCount + 1})`);
+        console.log(`⏳ No profile found, retrying... (attempt ${retryCount + 1})`);
         setTimeout(() => {
           refreshProfile(retryCount + 1);
         }, 1000);
@@ -60,14 +65,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       if (!data) {
-        console.error('Profile not found after retries');
+        console.error('❌ Profile not found after 3 retries');
         return;
       }
       
-      console.log('Profile loaded successfully:', data);
+      console.log('✅ Profile loaded successfully:', data);
       setProfile(data);
     } catch (error) {
-      console.error('Error in refreshProfile:', error);
+      console.error('💥 Exception in refreshProfile:', error);
     }
   };
 
