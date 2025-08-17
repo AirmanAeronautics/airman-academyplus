@@ -41,10 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('🔄 Fetching profile for user:', user.id, 'attempt:', retryCount + 1);
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          organizations!inner(*)
-        `)
+        .select('*')
         .eq('id', user.id)
         .maybeSingle();
       

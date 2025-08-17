@@ -29,13 +29,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/auth" replace />;
   }
 
-  // Auto-approval: All authenticated users with profiles can access the app
-  if (profile) {
+  // Check if user has a profile - simplified check
+  if (profile && profile.org_id) {
     return <>{children}</>;
   }
 
   // If no profile exists yet (edge case), show loading state
-  // This should be very rare as the trigger creates profiles immediately
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
       <Card className="w-full max-w-md">
