@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      direct_messages: {
+        Row: {
+          id: string
+          message: string
+          org_id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+          sent_at: string
+          thread_id: string | null
+        }
+        Insert: {
+          id?: string
+          message: string
+          org_id: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+          sent_at?: string
+          thread_id?: string | null
+        }
+        Update: {
+          id?: string
+          message?: string
+          org_id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+          sent_at?: string
+          thread_id?: string | null
+        }
+        Relationships: []
+      }
       event_log: {
         Row: {
           category: string
@@ -106,6 +139,69 @@ export type Database = {
           strengths?: Json | null
           student_id?: string
           study_recommendations?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      flight_schools: {
+        Row: {
+          admin_user_id: string | null
+          aviation_region: string
+          country: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id?: string | null
+          aviation_region: string
+          country: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string | null
+          aviation_region?: string
+          country?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      message_threads: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          participants: string[]
+          thread_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          participants: string[]
+          thread_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          participants?: string[]
+          thread_type?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -300,35 +396,101 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approval_status: string | null
+          aviation_region: string | null
           created_at: string | null
           email: string | null
+          flight_school_id: string | null
           id: string
           name: string | null
+          onboarding_completed: boolean | null
           org_id: string | null
           role: string | null
+          trial_expires_at: string | null
         }
         Insert: {
+          approval_status?: string | null
+          aviation_region?: string | null
           created_at?: string | null
           email?: string | null
+          flight_school_id?: string | null
           id: string
           name?: string | null
+          onboarding_completed?: boolean | null
           org_id?: string | null
           role?: string | null
+          trial_expires_at?: string | null
         }
         Update: {
+          approval_status?: string | null
+          aviation_region?: string | null
           created_at?: string | null
           email?: string | null
+          flight_school_id?: string | null
           id?: string
           name?: string | null
+          onboarding_completed?: boolean | null
           org_id?: string | null
           role?: string | null
+          trial_expires_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_flight_school_fk"
+            columns: ["flight_school_id"]
+            isOneToOne: false
+            referencedRelation: "flight_schools"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_join_requests: {
+        Row: {
+          flight_school_id: string
+          id: string
+          message: string | null
+          org_id: string
+          processed_at: string | null
+          processed_by: string | null
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          flight_school_id: string
+          id?: string
+          message?: string | null
+          org_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          flight_school_id?: string
+          id?: string
+          message?: string | null
+          org_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_join_requests_flight_school_id_fkey"
+            columns: ["flight_school_id"]
+            isOneToOne: false
+            referencedRelation: "flight_schools"
             referencedColumns: ["id"]
           },
         ]

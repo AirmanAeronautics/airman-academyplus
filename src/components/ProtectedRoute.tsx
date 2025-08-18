@@ -1,25 +1,28 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { ReactNode } from 'react';
-import PendingApproval from '@/pages/PendingApproval';
+import { ReactNode, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, session, authLoading } = useAuth();
+  const { user, session, authLoading, profile, profileLoading } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  // Only show loading for authentication, not profile
-  if (authLoading) {
+  // Show loading for authentication and initial profile load
+  if (authLoading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-            <p className="text-sm text-muted-foreground">Authenticating...</p>
+            <p className="text-sm text-muted-foreground">
+              {authLoading ? 'Authenticating...' : 'Loading profile...'}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -31,7 +34,36 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/auth" replace />;
   }
 
-  // ✅ IMMEDIATE REDIRECT: Once authenticated, show app immediately
-  // Profile loading happens in background, no blocking
+  // Check if user needs onboarding
+  if (profile && !profile.onboarding_completed && !showOnboarding) {
+    setShowOnboarding(true);
+  }
+
+  // Show onboarding flow if needed
+  if (showOnboarding || (profile && !profile.onboarding_completed)) {
+    return (
+      <OnboardingFlow 
+        onComplete={() => setShowOnboarding(false)} 
+      />
+    );
+  }
+
+  // Check if user has expired trial access
+  if (profile?.trial_expires_at && new Date() > new Date(profile.trial_expires_at)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="text-center space-y-4 p-8">
+            <h2 className="text-2xl font-bold">Trial Access Expired</h2>
+            <p className="text-muted-foreground">
+              Your trial access has expired. Please contact your flight school administrator 
+              for approval to continue using the platform.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return <>{children}</>;
 }

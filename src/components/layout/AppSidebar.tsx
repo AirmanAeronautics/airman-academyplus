@@ -35,12 +35,14 @@ import { useAuth } from "@/hooks/useAuth"
 export type AcademyRole =
   | "admin"
   | "instructor"
+  | "flight_instructor"
   | "ops_manager"
   | "maintenance_officer"
   | "compliance_officer"
   | "accounts_officer"
   | "marketing_crm"
   | "support"
+  | "super_admin"
 
 // If your User.type doesn't yet reflect these, ensure `role` is a string
 // and maps to one of the above. Example (in @/data/users):
@@ -51,12 +53,15 @@ const isAcademyRole = (r: string | undefined): r is AcademyRole =>
   !!r &&
   [
     "admin",
+    "instructor",
+    "flight_instructor",
     "ops_manager",
     "maintenance_officer",
     "compliance_officer",
     "accounts_officer",
     "marketing_crm",
     "support",
+    "super_admin"
   ].includes(r)
 
 // ---- NAVIGATION MODEL -------------------------------------------------------
@@ -105,7 +110,7 @@ const navigationItems: NavItem[] = [
     title: "Training Report",
     url: "/people",
     icon: Users,
-    roles: ["admin", "instructor"],
+    roles: ["admin", "instructor", "flight_instructor"],
   },
   {
     title: "Fleet & Maintenance",
@@ -156,7 +161,7 @@ const navigationItems: NavItem[] = [
 // ---- COMPONENT --------------------------------------------------------------
 
 interface AppSidebarProps {
-  currentUser?: User
+  currentUser?: any // Profile from auth context
 }
 
 export function AppSidebar({ currentUser }: AppSidebarProps) {
@@ -165,7 +170,7 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
   const currentPath = location.pathname
   const collapsed = state === "collapsed"
 
-  const role: AcademyRole = isAcademyRole(currentUser?.role) ? currentUser!.role : "ops_manager" // sensible default for demo
+  const role = currentUser?.role || "ops_manager"
 
   const isActive = (path: string) => {
     if (path === "/" && currentPath === "/") return true
@@ -238,7 +243,7 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
           <SidebarGroupContent className="px-2">
             <SidebarMenu className="space-y-1">
               {navigationItems
-                .filter((item) => item.roles.includes(role))
+                .filter((item) => item.roles.includes(role) || role === 'super_admin')
                 .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild className="h-auto p-0">
