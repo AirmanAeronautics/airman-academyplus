@@ -9,8 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
-import { AlertCircle, Mail, Lock, Chrome, Apple } from 'lucide-react';
+import { AlertCircle, Mail, Lock, Chrome, Apple, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useDemo } from '@/contexts/DemoContext';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -21,12 +22,13 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, signInWithPassword } = useAuth();
+  const { isDemoMode, startDemo } = useDemo();
 
   useEffect(() => {
-    if (user) {
+    if (user || isDemoMode) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, isDemoMode, navigate]);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -266,6 +268,24 @@ export default function Auth() {
     }
   };
 
+  const handleDemoMode = () => {
+    if (!email) {
+      setErrors({ email: 'Please enter an email address for demo mode' });
+      return;
+    }
+    if (!validateEmail(email)) {
+      setErrors({ email: 'Please enter a valid email address' });
+      return;
+    }
+    
+    startDemo(email);
+    toast({
+      title: "Demo Mode Activated",
+      description: "Experience the full platform with demo data. You can switch roles anytime!",
+    });
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <Card className="w-full max-w-md">
@@ -313,6 +333,51 @@ export default function Auth() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+            </div>
+          </div>
+
+          {/* Demo Mode Section */}
+          <div className="space-y-3 p-4 border-2 border-dashed border-primary/20 rounded-lg bg-primary/5">
+            <div className="flex items-center gap-2 text-primary">
+              <Zap className="h-4 w-4" />
+              <span className="font-semibold text-sm">Try Demo Mode</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Experience the full platform without signing up. Perfect for exploring different user roles and features.
+            </p>
+            <div className="space-y-2">
+              <Input
+                placeholder="Enter any email for demo"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors(prev => ({ ...prev, email: undefined }));
+                }}
+                className={errors.email ? "border-destructive" : ""}
+              />
+              {errors.email && (
+                <Alert variant="destructive" className="py-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-sm">{errors.email}</AlertDescription>
+                </Alert>
+              )}
+              <Button 
+                onClick={handleDemoMode}
+                variant="outline" 
+                className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Zap className="mr-2 h-4 w-4" />
+                Start Demo Experience
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or sign in normally</span>
             </div>
           </div>
 

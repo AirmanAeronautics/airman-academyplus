@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { ensureProfileAndOrg, handleOnboardingResult } from '@/lib/auth/onboarding';
+import { useDemo } from '@/contexts/DemoContext';
 
 interface AuthContextType {
   user: User | null;
@@ -12,6 +13,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   signInWithPassword: (email: string, password: string) => Promise<{ error: any }>;
   refreshProfile: () => Promise<void>;
+  isDemoMode?: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +36,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
+  const { isDemoMode, demoUser } = useDemo();
+
+  // In demo mode, return demo user data
+  if (isDemoMode && demoUser) {
+    return (
+      <AuthContext.Provider value={{
+        user: { id: demoUser.id, email: demoUser.email } as User,
+        session: { user: { id: demoUser.id, email: demoUser.email } } as Session,
+        profile: demoUser,
+        authLoading: false,
+        profileLoading: false,
+        signOut: async () => {},
+        signInWithPassword: async () => ({ error: null }),
+        refreshProfile: async () => {},
+        isDemoMode: true
+      }}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
 
   // Initialize auth state and set up listener
   useEffect(() => {
@@ -172,6 +194,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signOut,
     signInWithPassword,
     refreshProfile,
+    isDemoMode: false,
   };
 
   return (

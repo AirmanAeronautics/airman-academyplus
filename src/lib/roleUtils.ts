@@ -2,7 +2,8 @@ export type UserRole =
   | "student" 
   | "instructor" 
   | "flight_instructor"
-  | "admin" 
+  | "admin"
+  | "super_admin"
   | "ops_manager" 
   | "maintenance_officer" 
   | "compliance_officer" 
@@ -12,7 +13,7 @@ export type UserRole =
   | "pending";
 
 export const TRAINING_ROLES = ["student", "instructor", "flight_instructor"] as const;
-export const STAFF_ROLES = ["admin", "ops_manager", "maintenance_officer", "compliance_officer", "accounts_officer", "marketing_crm", "support"] as const;
+export const STAFF_ROLES = ["admin", "super_admin", "ops_manager", "maintenance_officer", "compliance_officer", "accounts_officer", "marketing_crm", "support"] as const;
 
 export function canViewStudentProgress(userRole: string | undefined): boolean {
   return userRole === "instructor" || userRole === "flight_instructor" || userRole === "admin";
@@ -50,7 +51,8 @@ export function getRoleDisplayName(role: string | undefined): string {
     student: "Student",
     instructor: "Flight Instructor",
     flight_instructor: "Flight Instructor",
-    admin: "Administrator", 
+    admin: "Administrator",
+    super_admin: "Super Administrator",
     ops_manager: "Operations Manager",
     maintenance_officer: "Maintenance Officer",
     compliance_officer: "Compliance Officer",

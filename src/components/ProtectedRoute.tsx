@@ -4,14 +4,17 @@ import { ReactNode, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
+import { DemoOnboardingFlow } from '@/components/onboarding/DemoOnboardingFlow';
+import { useDemo } from '@/contexts/DemoContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, session, authLoading, profile, profileLoading } = useAuth();
+  const { user, session, authLoading, profile, profileLoading, isDemoMode } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const { demoUser } = useDemo();
 
   // Show loading for authentication and initial profile load
   if (authLoading || profileLoading) {
@@ -29,23 +32,32 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Redirect to auth if not authenticated
-  if (!user || !session) {
+  // Redirect to auth if not authenticated (unless in demo mode)
+  if ((!user || !session) && !isDemoMode) {
     return <Navigate to="/auth" replace />;
   }
 
   // Check if user needs onboarding
-  if (profile && !profile.onboarding_completed && !showOnboarding) {
+  const currentProfile = isDemoMode ? demoUser : profile;
+  if (currentProfile && !currentProfile.onboarding_completed && !showOnboarding) {
     setShowOnboarding(true);
   }
 
   // Show onboarding flow if needed
-  if (showOnboarding || (profile && !profile.onboarding_completed)) {
-    return (
-      <OnboardingFlow 
-        onComplete={() => setShowOnboarding(false)} 
-      />
-    );
+  if (showOnboarding || (currentProfile && !currentProfile.onboarding_completed)) {
+    if (isDemoMode) {
+      return (
+        <DemoOnboardingFlow 
+          onComplete={() => setShowOnboarding(false)} 
+        />
+      );
+    } else {
+      return (
+        <OnboardingFlow 
+          onComplete={() => setShowOnboarding(false)} 
+        />
+      );
+    }
   }
 
   // Check if user has expired trial access

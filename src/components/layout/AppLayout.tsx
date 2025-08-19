@@ -3,14 +3,17 @@ import { AppSidebar } from "./AppSidebar";
 import { NotificationCenter } from "@/components/ui/notification-center";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Zap, RotateCcw } from "lucide-react";
+import { useDemo } from "@/contexts/DemoContext";
+import { Badge } from "@/components/ui/badge";
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isDemoMode } = useAuth();
+  const { exitDemo, resetDemo } = useDemo();
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -28,12 +31,33 @@ export function AppLayout({ children }: AppLayoutProps) {
               <NotificationCenter />
               {profile && (
                 <div className="flex items-center gap-3">
+                  {isDemoMode && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                        <Zap className="h-3 w-3 mr-1" />
+                        Demo Mode
+                      </Badge>
+                      <Button variant="ghost" size="sm" onClick={resetDemo} title="Try Different Role">
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={exitDemo} title="Exit Demo">
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                   <span className="text-sm text-muted-foreground">
                     {profile.name || profile.email}
+                    {isDemoMode && (
+                      <span className="ml-1 text-primary">
+                        ({profile.role?.replace('_', ' ')})
+                      </span>
+                    )}
                   </span>
-                  <Button variant="ghost" size="sm" onClick={signOut}>
-                    <LogOut className="h-4 w-4" />
-                  </Button>
+                  {!isDemoMode && (
+                    <Button variant="ghost" size="sm" onClick={signOut}>
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
