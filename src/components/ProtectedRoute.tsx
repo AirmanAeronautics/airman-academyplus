@@ -12,9 +12,10 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  // Call all hooks at the top - never after conditional returns
   const { user, session, authLoading, profile, profileLoading, isDemoMode } = useAuth();
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const { demoUser } = useDemo();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Show loading for authentication and initial profile load
   if (authLoading || profileLoading) {
