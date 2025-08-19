@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,30 +40,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profileLoading, setProfileLoading] = useState(false);
   const { isDemoMode, demoUser } = useDemo();
 
-  // In demo mode, return demo user data
-  if (isDemoMode && demoUser) {
-    return (
-      <AuthContext.Provider value={{
-        user: { id: demoUser.id, email: demoUser.email } as User,
-        session: { user: { id: demoUser.id, email: demoUser.email } } as Session,
-        profile: demoUser,
-        authLoading: false,
-        profileLoading: false,
-        signOut: async () => {},
-        signInWithPassword: async () => ({ error: null }),
-        refreshProfile: async () => {},
-        isDemoMode: true
-      }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  }
-
-  // Initialize auth state and set up listener
+  // Initialize auth state and set up listener - ALWAYS run this effect
   useEffect(() => {
+    // Skip auth setup in demo mode
+    if (isDemoMode) {
+      setAuthLoading(false);
+      setProfileLoading(false);
+      return;
+    }
+
     let mounted = true;
 
-    // Set up auth state listener FIRST
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
@@ -108,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     );
 
-    // THEN check for existing session
+    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
       
@@ -143,7 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isDemoMode]); // Add isDemoMode as dependency
 
   const signInWithPassword = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -186,7 +175,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const value = {
+  // Determine the context value based on demo mode
+  const value = isDemoMode && demoUser ? {
+    user: { id: demoUser.id, email: demoUser.email } as User,
+    session: { user: { id: demoUser.id, email: demoUser.email } } as Session,
+    profile: demoUser,
+    authLoading: false,
+    profileLoading: false,
+    signOut: async () => {},
+    signInWithPassword: async () => ({ error: null }),
+    refreshProfile: async () => {},
+    isDemoMode: true
+  } : {
     user,
     session,
     profile,
