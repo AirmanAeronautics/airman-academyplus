@@ -10,11 +10,9 @@ import { Progress } from "@/components/ui/progress"
 import { StudentProgressDashboard } from "@/components/progress/StudentProgressDashboard"
 import { StudentReadinessDashboard } from "@/components/instructor/StudentReadinessDashboard"
 import { RoleGuard } from "@/components/access/RoleGuard"
-import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
 import { MILESTONES_PPL, AVAILABLE_BADGES } from "@/types/progress"
 import { useAuth } from "@/hooks/useAuth"
 import { getUserPermissions, getRoleDisplayName } from "@/lib/roleUtils"
-import { users, type User } from "@/data/users"
 
 const pilots = [
   // Students
@@ -112,10 +110,8 @@ export default function People() {
   const [showAIInsights, setShowAIInsights] = useState(false)
   const [filterType, setFilterType] = useState("all")
   const [activeTab, setActiveTab] = useState("directory")
-  const [currentUser, setCurrentUser] = useState<User>(users[0]) // Default to John Henderson (ops manager)
-  
-  // Use demo role switcher role instead of auth profile role for demo purposes
-  const permissions = getUserPermissions(currentUser.role)
+  // Use actual authenticated user's role for permissions
+  const permissions = getUserPermissions(profile?.role)
 
   // Mock student progress data
   const mockStudentProgress = {
@@ -169,10 +165,6 @@ export default function People() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <RoleSwitcher 
-              currentUser={currentUser} 
-              onUserChange={setCurrentUser} 
-            />
             {permissions.canManageStudentData && (
               <Button className="bg-primary hover:bg-primary-dark">
                 <MessageSquare className="h-4 w-4 mr-2" />
@@ -451,7 +443,7 @@ export default function People() {
 
           {permissions.canViewStudentProgress && (
             <TabsContent value="instructor-dashboard" className="space-y-6">
-              <StudentReadinessDashboard instructorId={currentUser.id} />
+              <StudentReadinessDashboard instructorId={profile?.id || "1"} />
             </TabsContent>
           )}
         </Tabs>
