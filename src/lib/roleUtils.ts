@@ -15,7 +15,7 @@ export const TRAINING_ROLES = ["student", "instructor"] as const;
 export const STAFF_ROLES = ["admin", "super_admin", "ops_manager", "maintenance_officer", "compliance_officer", "accounts_officer", "marketing_crm", "support"] as const;
 
 export function canViewStudentProgress(userRole: string | undefined): boolean {
-  return userRole === "instructor" || userRole === "admin";
+  return userRole === "instructor" || userRole === "admin" || userRole === "ops_manager" || userRole === "compliance_officer";
 }
 
 export function canViewAllStudents(userRole: string | undefined): boolean {
@@ -23,7 +23,7 @@ export function canViewAllStudents(userRole: string | undefined): boolean {
 }
 
 export function canManageStudentData(userRole: string | undefined): boolean {
-  return userRole === "instructor" || userRole === "admin";
+  return userRole === "instructor" || userRole === "admin" || userRole === "ops_manager";
 }
 
 export function isStudent(userRole: string | undefined): boolean {
@@ -39,8 +39,8 @@ export function isTrainingRole(userRole: string | undefined): boolean {
 }
 
 export function canAccessPeopleDirectory(userRole: string | undefined): boolean {
-  // Only training roles and admins should access People directory
-  return isTrainingRole(userRole) || userRole === "admin";
+  // Training roles, admins, and key operations staff should access People directory
+  return isTrainingRole(userRole) || userRole === "admin" || userRole === "ops_manager" || userRole === "compliance_officer";
 }
 
 export function getRoleDisplayName(role: string | undefined): string {
