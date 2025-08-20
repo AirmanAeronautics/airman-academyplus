@@ -34,8 +34,6 @@ import { useAuth } from "@/hooks/useAuth"
 // Only Academy staff roles (no student/instructor logins here)
 export type AcademyRole =
   | "admin"
-  | "instructor"
-  | "flight_instructor"
   | "ops_manager"
   | "maintenance_officer"
   | "compliance_officer"
@@ -53,8 +51,6 @@ const isAcademyRole = (r: string | undefined): r is AcademyRole =>
   !!r &&
   [
     "admin",
-    "instructor",
-    "flight_instructor",
     "ops_manager",
     "maintenance_officer",
     "compliance_officer",
@@ -110,7 +106,7 @@ const navigationItems: NavItem[] = [
     title: "Training Report",
     url: "/people",
     icon: Users,
-    roles: ["admin", "instructor", "flight_instructor"],
+    roles: ["admin", "ops_manager"],
   },
   {
     title: "Fleet & Maintenance",

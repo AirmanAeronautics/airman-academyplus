@@ -112,7 +112,7 @@ export default function People() {
   const [showAIInsights, setShowAIInsights] = useState(false)
   const [filterType, setFilterType] = useState("all")
   const [activeTab, setActiveTab] = useState("directory")
-  const [currentUser, setCurrentUser] = useState<User>(users[1]) // Default to Sarah Wilson (flight instructor)
+  const [currentUser, setCurrentUser] = useState<User>(users[0]) // Default to John Henderson (ops manager)
   
   // Use demo role switcher role instead of auth profile role for demo purposes
   const permissions = getUserPermissions(currentUser.role)
@@ -164,12 +164,8 @@ export default function People() {
           <div>
             <h1 className="text-3xl font-bold text-foreground">People & Progress</h1>
             <p className="text-muted-foreground mt-1">
-              {permissions.isInstructor 
-                ? "Manage your students and track their progress" 
-                : permissions.isStudent 
-                ? "View training directory and connect with instructors"
-                : "Flight training personnel directory"
-              }
+              Flight training personnel directory - Data synced from Maverick Training Platform
+              <span className="ml-2 text-xs bg-muted px-2 py-1 rounded">External Integration</span>
             </p>
           </div>
           <div className="flex items-center gap-4">

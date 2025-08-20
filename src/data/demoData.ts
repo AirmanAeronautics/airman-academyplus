@@ -218,14 +218,6 @@ export const getRoleFeatures = (role: string) => {
       "Communicate with instructors",
       "View weather and safety alerts"
     ],
-    flight_instructor: [
-      "Manage assigned students",
-      "Create and update training reports",
-      "Schedule lessons and aircraft",
-      "Track student progress and readiness",
-      "Access curriculum and training materials",
-      "Communicate with students and staff"
-    ],
     super_admin: [
       "Complete system administration",
       "Manage all users and permissions",

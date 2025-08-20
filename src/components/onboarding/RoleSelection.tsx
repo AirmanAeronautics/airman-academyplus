@@ -21,22 +21,6 @@ interface RoleSelectionProps {
 
 const roles = [
   {
-    id: 'student',
-    title: 'Student Pilot',
-    description: 'Learning to fly, tracking progress, and accessing training materials',
-    icon: GraduationCap,
-    color: 'bg-blue-500/10 text-blue-700 border-blue-200',
-    features: ['Flight progress tracking', 'Lesson scheduling', 'Certificate management']
-  },
-  {
-    id: 'instructor',
-    title: 'Flight Instructor',
-    description: 'Teaching students, managing training programs, and tracking progress',
-    icon: Users,
-    color: 'bg-green-500/10 text-green-700 border-green-200',
-    features: ['Student management', 'Progress assessment', 'Training reports']
-  },
-  {
     id: 'admin',
     title: 'Super Administrator',
     description: 'Full system access, user management, and organizational oversight',

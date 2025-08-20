@@ -12,7 +12,6 @@ import { users, type User } from "@/data/users"
 
 const roleLabels = {
   ops_manager: "Ops Manager",
-  flight_instructor: "Flight Instructor", 
   maintenance_officer: "Maintenance Officer",
   compliance_officer: "Compliance Officer",
   accounts_officer: "Accounts Officer",
