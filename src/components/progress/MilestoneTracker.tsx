@@ -39,11 +39,11 @@ export function MilestoneTracker({ milestones, totalHours, isInstructor = false 
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "solo": return "gradient-solo";
-      case "cross_country": return "gradient-cross-country";
-      case "night": return "gradient-night";
-      case "instrument": return "gradient-instrument";
-      case "checkride": return "gradient-checkride";
+      case "solo": return "bg-sega-blue";
+      case "cross_country": return "bg-sega-blue";
+      case "night": return "bg-sega-blue";
+      case "instrument": return "bg-sega-blue";
+      case "checkride": return "bg-sega-blue";
       default: return "bg-muted";
     }
   };
