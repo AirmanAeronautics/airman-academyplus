@@ -14,6 +14,161 @@ export type Database = {
   }
   public: {
     Tables: {
+      aircraft: {
+        Row: {
+          aircraft_type: string
+          avionics_config: Json | null
+          certificate_expiry: string | null
+          created_at: string
+          current_fuel_level: number | null
+          fuel_capacity: number | null
+          hours_since_maintenance: number
+          id: string
+          insurance_expiry: string | null
+          last_inspection: string | null
+          location: string | null
+          maintenance_intervals: Json | null
+          make_model: string
+          next_inspection: string | null
+          org_id: string
+          registration: string
+          status: string
+          total_hours: number
+          updated_at: string
+          year_manufactured: number | null
+        }
+        Insert: {
+          aircraft_type: string
+          avionics_config?: Json | null
+          certificate_expiry?: string | null
+          created_at?: string
+          current_fuel_level?: number | null
+          fuel_capacity?: number | null
+          hours_since_maintenance?: number
+          id?: string
+          insurance_expiry?: string | null
+          last_inspection?: string | null
+          location?: string | null
+          maintenance_intervals?: Json | null
+          make_model: string
+          next_inspection?: string | null
+          org_id: string
+          registration: string
+          status?: string
+          total_hours?: number
+          updated_at?: string
+          year_manufactured?: number | null
+        }
+        Update: {
+          aircraft_type?: string
+          avionics_config?: Json | null
+          certificate_expiry?: string | null
+          created_at?: string
+          current_fuel_level?: number | null
+          fuel_capacity?: number | null
+          hours_since_maintenance?: number
+          id?: string
+          insurance_expiry?: string | null
+          last_inspection?: string | null
+          location?: string | null
+          maintenance_intervals?: Json | null
+          make_model?: string
+          next_inspection?: string | null
+          org_id?: string
+          registration?: string
+          status?: string
+          total_hours?: number
+          updated_at?: string
+          year_manufactured?: number | null
+        }
+        Relationships: []
+      }
+      aircraft_defects: {
+        Row: {
+          aircraft_id: string
+          created_at: string
+          description: string
+          due_date: string | null
+          id: string
+          maintenance_event_id: string | null
+          mel_reference: string | null
+          org_id: string
+          rectified_at: string | null
+          rectified_by: string | null
+          regulatory_action_required: boolean | null
+          reported_at: string
+          reported_by: string | null
+          severity: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          aircraft_id: string
+          created_at?: string
+          description: string
+          due_date?: string | null
+          id?: string
+          maintenance_event_id?: string | null
+          mel_reference?: string | null
+          org_id: string
+          rectified_at?: string | null
+          rectified_by?: string | null
+          regulatory_action_required?: boolean | null
+          reported_at?: string
+          reported_by?: string | null
+          severity: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          aircraft_id?: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          maintenance_event_id?: string | null
+          mel_reference?: string | null
+          org_id?: string
+          rectified_at?: string | null
+          rectified_by?: string | null
+          regulatory_action_required?: boolean | null
+          reported_at?: string
+          reported_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aircraft_defects_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aircraft_defects_maintenance_event_id_fkey"
+            columns: ["maintenance_event_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aircraft_defects_rectified_by_fkey"
+            columns: ["rectified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aircraft_defects_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       direct_messages: {
         Row: {
           id: string
@@ -178,6 +333,323 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      flight_sessions: {
+        Row: {
+          actual_end: string | null
+          actual_start: string | null
+          aircraft_id: string | null
+          arrival_airport: string | null
+          created_at: string
+          departure_airport: string | null
+          flight_date: string
+          flight_phases: Json | null
+          flight_time: number | null
+          flight_type: string
+          fuel_used: number | null
+          id: string
+          instructor_id: string | null
+          lesson_plan: string | null
+          org_id: string
+          route: string | null
+          scheduled_end: string | null
+          scheduled_start: string | null
+          session_ref: string
+          status: string
+          student_id: string | null
+          telemetry_ingested: boolean | null
+          telemetry_ingested_at: string | null
+          updated_at: string
+          weather_conditions: Json | null
+        }
+        Insert: {
+          actual_end?: string | null
+          actual_start?: string | null
+          aircraft_id?: string | null
+          arrival_airport?: string | null
+          created_at?: string
+          departure_airport?: string | null
+          flight_date: string
+          flight_phases?: Json | null
+          flight_time?: number | null
+          flight_type: string
+          fuel_used?: number | null
+          id?: string
+          instructor_id?: string | null
+          lesson_plan?: string | null
+          org_id: string
+          route?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          session_ref: string
+          status?: string
+          student_id?: string | null
+          telemetry_ingested?: boolean | null
+          telemetry_ingested_at?: string | null
+          updated_at?: string
+          weather_conditions?: Json | null
+        }
+        Update: {
+          actual_end?: string | null
+          actual_start?: string | null
+          aircraft_id?: string | null
+          arrival_airport?: string | null
+          created_at?: string
+          departure_airport?: string | null
+          flight_date?: string
+          flight_phases?: Json | null
+          flight_time?: number | null
+          flight_type?: string
+          fuel_used?: number | null
+          id?: string
+          instructor_id?: string | null
+          lesson_plan?: string | null
+          org_id?: string
+          route?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          session_ref?: string
+          status?: string
+          student_id?: string | null
+          telemetry_ingested?: boolean | null
+          telemetry_ingested_at?: string | null
+          updated_at?: string
+          weather_conditions?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_sessions_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_sessions_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flight_telemetry: {
+        Row: {
+          aileron_position: number | null
+          airspeed: number | null
+          altitude_agl: number | null
+          altitude_msl: number | null
+          autopilot_engaged: boolean | null
+          com1_frequency: number | null
+          com2_frequency: number | null
+          cylinder_head_temp: number | null
+          elevator_position: number | null
+          engine_rpm: number | null
+          exceedance_flags: Json | null
+          exhaust_gas_temp: number | null
+          flight_phase: string | null
+          flight_session_id: string
+          fuel_flow: number | null
+          g_force_lateral: number | null
+          g_force_longitudinal: number | null
+          g_force_vertical: number | null
+          groundspeed: number | null
+          heading: number | null
+          latitude: number | null
+          longitude: number | null
+          manifold_pressure: number | null
+          nav1_frequency: number | null
+          nav2_frequency: number | null
+          oil_pressure: number | null
+          oil_temperature: number | null
+          org_id: string
+          outside_air_temp: number | null
+          rudder_position: number | null
+          throttle_position: number | null
+          time: string
+          track: number | null
+          transponder_code: number | null
+          vertical_speed: number | null
+          visibility: number | null
+          wind_direction: number | null
+          wind_speed: number | null
+        }
+        Insert: {
+          aileron_position?: number | null
+          airspeed?: number | null
+          altitude_agl?: number | null
+          altitude_msl?: number | null
+          autopilot_engaged?: boolean | null
+          com1_frequency?: number | null
+          com2_frequency?: number | null
+          cylinder_head_temp?: number | null
+          elevator_position?: number | null
+          engine_rpm?: number | null
+          exceedance_flags?: Json | null
+          exhaust_gas_temp?: number | null
+          flight_phase?: string | null
+          flight_session_id: string
+          fuel_flow?: number | null
+          g_force_lateral?: number | null
+          g_force_longitudinal?: number | null
+          g_force_vertical?: number | null
+          groundspeed?: number | null
+          heading?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          manifold_pressure?: number | null
+          nav1_frequency?: number | null
+          nav2_frequency?: number | null
+          oil_pressure?: number | null
+          oil_temperature?: number | null
+          org_id: string
+          outside_air_temp?: number | null
+          rudder_position?: number | null
+          throttle_position?: number | null
+          time: string
+          track?: number | null
+          transponder_code?: number | null
+          vertical_speed?: number | null
+          visibility?: number | null
+          wind_direction?: number | null
+          wind_speed?: number | null
+        }
+        Update: {
+          aileron_position?: number | null
+          airspeed?: number | null
+          altitude_agl?: number | null
+          altitude_msl?: number | null
+          autopilot_engaged?: boolean | null
+          com1_frequency?: number | null
+          com2_frequency?: number | null
+          cylinder_head_temp?: number | null
+          elevator_position?: number | null
+          engine_rpm?: number | null
+          exceedance_flags?: Json | null
+          exhaust_gas_temp?: number | null
+          flight_phase?: string | null
+          flight_session_id?: string
+          fuel_flow?: number | null
+          g_force_lateral?: number | null
+          g_force_longitudinal?: number | null
+          g_force_vertical?: number | null
+          groundspeed?: number | null
+          heading?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          manifold_pressure?: number | null
+          nav1_frequency?: number | null
+          nav2_frequency?: number | null
+          oil_pressure?: number | null
+          oil_temperature?: number | null
+          org_id?: string
+          outside_air_temp?: number | null
+          rudder_position?: number | null
+          throttle_position?: number | null
+          time?: string
+          track?: number | null
+          transponder_code?: number | null
+          vertical_speed?: number | null
+          visibility?: number | null
+          wind_direction?: number | null
+          wind_speed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_telemetry_flight_session_id_fkey"
+            columns: ["flight_session_id"]
+            isOneToOne: false
+            referencedRelation: "flight_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_events: {
+        Row: {
+          aircraft_id: string
+          certifying_signature: string | null
+          completed_at: string | null
+          cost: number | null
+          created_at: string
+          description: string
+          event_type: string
+          hours_at_maintenance: number | null
+          id: string
+          maintenance_type: string
+          next_due_date: string | null
+          next_due_hours: number | null
+          org_id: string
+          parts_used: Json | null
+          performed_by: string | null
+          regulatory_ref: string | null
+          scheduled_date: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+          work_order_ref: string | null
+        }
+        Insert: {
+          aircraft_id: string
+          certifying_signature?: string | null
+          completed_at?: string | null
+          cost?: number | null
+          created_at?: string
+          description: string
+          event_type: string
+          hours_at_maintenance?: number | null
+          id?: string
+          maintenance_type: string
+          next_due_date?: string | null
+          next_due_hours?: number | null
+          org_id: string
+          parts_used?: Json | null
+          performed_by?: string | null
+          regulatory_ref?: string | null
+          scheduled_date?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          work_order_ref?: string | null
+        }
+        Update: {
+          aircraft_id?: string
+          certifying_signature?: string | null
+          completed_at?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string
+          event_type?: string
+          hours_at_maintenance?: number | null
+          id?: string
+          maintenance_type?: string
+          next_due_date?: string | null
+          next_due_hours?: number | null
+          org_id?: string
+          parts_used?: Json | null
+          performed_by?: string | null
+          regulatory_ref?: string | null
+          scheduled_date?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          work_order_ref?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_events_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       message_threads: {
         Row: {
