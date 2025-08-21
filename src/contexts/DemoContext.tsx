@@ -71,10 +71,10 @@ export function DemoProvider({ children }: DemoProviderProps) {
       id: `demo-${Date.now()}`,
       email,
       name: email.split('@')[0],
-      role: '',
-      aviation_region: '',
+      role: 'admin',
+      aviation_region: 'North America',
       org_id: '550e8400-e29b-41d4-a716-446655440000', // Mock UUID for demo
-      onboarding_completed: false,
+      onboarding_completed: true,
       approval_status: 'approved'
     };
     
