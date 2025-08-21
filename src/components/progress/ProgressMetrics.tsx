@@ -82,7 +82,7 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div 
-                  className="h-full progress-cross-country rounded-full transition-all duration-300" 
+                  className="h-full bg-gradient-to-r from-primary-light to-primary-light/70 rounded-full transition-all duration-300" 
                   style={{ width: `${dualPercentage}%` }}
                 />
               </div>
@@ -95,7 +95,7 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div 
-                  className="h-full progress-solo rounded-full transition-all duration-300" 
+                  className="h-full bg-gradient-to-r from-accent-foreground to-accent-foreground/70 rounded-full transition-all duration-300" 
                   style={{ width: `${soloPercentage}%` }}
                 />
               </div>
@@ -108,7 +108,7 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div 
-                  className="h-full progress-cross-country rounded-full transition-all duration-300" 
+                  className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-300" 
                   style={{ width: `${crossCountryPercentage}%` }}
                 />
               </div>

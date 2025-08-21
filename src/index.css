@@ -190,22 +190,6 @@ All colors MUST be HSL.
     animation: gradient-shift 6s ease infinite;
   }
 
-  /* Subtle mesh gradient for progress bars */
-  .progress-solo {
-    background: linear-gradient(90deg, #BBDFFB, #E4F2FD);
-  }
-  
-  .progress-cross-country {
-    background: linear-gradient(90deg, #3B83F6, #168ADD);
-  }
-  
-  .progress-night {
-    background: linear-gradient(90deg, #1E3A8A, #042262);
-  }
-  
-  .progress-instrument {
-    background: linear-gradient(90deg, #168ADD, #3B83F6);
-  }
 
   @keyframes gradient-shift {
     0% { background-position: 0% 50%; }
