@@ -57,19 +57,19 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
               <p className="text-sm text-muted-foreground">Total Hours</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold" style={{color: '#3B83F6'}}>{progress.dualHours}</p>
+              <p className="text-2xl font-bold text-primary-light">{progress.dualHours}</p>
               <p className="text-sm text-muted-foreground">Dual ({Math.round(dualPercentage)}%)</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold" style={{color: '#BBDFFB'}}>{progress.soloHours}</p>
+              <p className="text-2xl font-bold text-accent-foreground">{progress.soloHours}</p>
               <p className="text-sm text-muted-foreground">Solo ({Math.round(soloPercentage)}%)</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold" style={{color: '#168ADD'}}>{progress.crossCountryHours}</p>
+              <p className="text-2xl font-bold text-primary">{progress.crossCountryHours}</p>
               <p className="text-sm text-muted-foreground">Cross Country</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold" style={{color: '#1E3A8A'}}>{progress.nightHours}</p>
+              <p className="text-2xl font-bold text-primary-dark">{progress.nightHours}</p>
               <p className="text-sm text-muted-foreground">Night</p>
             </div>
           </div>
