@@ -8,6 +8,7 @@ export interface DemoUser {
   aviation_region: string;
   flight_school_id?: string;
   flight_school_name?: string;
+  org_id: string;
   onboarding_completed: boolean;
   approval_status: 'approved' | 'pending';
   trial_expires_at?: string;
@@ -72,6 +73,7 @@ export function DemoProvider({ children }: DemoProviderProps) {
       name: email.split('@')[0],
       role: '',
       aviation_region: '',
+      org_id: '550e8400-e29b-41d4-a716-446655440000', // Mock UUID for demo
       onboarding_completed: false,
       approval_status: 'approved'
     };
