@@ -8,12 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { useDemo } from '@/contexts/DemoContext';
 
 export default function AdminSettings() {
   const { profile } = useAuth();
   const { toast } = useToast();
-  const { isDemoMode } = useDemo();
   const [settings, setSettings] = useState<any>(null);
   const [organization, setOrganization] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -26,30 +24,6 @@ export default function AdminSettings() {
     if (!profile?.org_id) return;
 
     try {
-      // Provide mock data for demo mode
-      if (isDemoMode) {
-        const mockOrganization = {
-          id: profile.org_id,
-          name: 'AIRMAN Academy (Demo)',
-          domain: 'airmanacademy.com',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          is_default: true
-        };
-
-        const mockSettings = {
-          id: '550e8400-e29b-41d4-a716-446655440001',
-          org_id: profile.org_id,
-          auto_approve_domain: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-
-        setOrganization(mockOrganization);
-        setSettings(mockSettings);
-        return;
-      }
-
       // Fetch organization details
       const { data: orgData } = await supabase
         .from('organizations')
@@ -89,16 +63,6 @@ export default function AdminSettings() {
     if (!settings) return;
 
     try {
-      // Handle demo mode updates locally
-      if (isDemoMode) {
-        setSettings({ ...settings, auto_approve_domain: enabled });
-        toast({
-          title: "Demo Settings Updated",
-          description: `Domain auto-approval has been ${enabled ? 'enabled' : 'disabled'} in demo mode.`,
-        });
-        return;
-      }
-
       const { error } = await supabase
         .from('org_settings')
         .update({ auto_approve_domain: enabled })
