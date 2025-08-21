@@ -13,7 +13,7 @@ interface MilestoneTrackerProps {
 
 export function MilestoneTracker({ milestones, totalHours, isInstructor = false }: MilestoneTrackerProps) {
   const getMilestoneIcon = (category: string, completed: boolean) => {
-    const iconClass = completed ? "text-success" : "text-muted-foreground";
+    const iconClass = completed ? "text-white" : "text-white/70";
     
     switch (category) {
       case "solo":
