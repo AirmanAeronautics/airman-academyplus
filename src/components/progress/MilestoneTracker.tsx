@@ -39,12 +39,12 @@ export function MilestoneTracker({ milestones, totalHours, isInstructor = false 
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "solo": return "bg-blue-500";
-      case "cross_country": return "bg-green-500";
-      case "night": return "bg-purple-500";
-      case "instrument": return "bg-orange-500";
-      case "checkride": return "bg-gold-500";
-      default: return "bg-gray-500";
+      case "solo": return "gradient-solo";
+      case "cross_country": return "gradient-cross-country";
+      case "night": return "gradient-night";
+      case "instrument": return "gradient-instrument";
+      case "checkride": return "gradient-checkride";
+      default: return "bg-muted";
     }
   };
 
@@ -70,7 +70,7 @@ export function MilestoneTracker({ milestones, totalHours, isInstructor = false 
 
               return (
                 <div key={category} className="text-center p-4 border rounded-lg">
-                  <div className={`w-12 h-12 ${getCategoryColor(category)} rounded-full mx-auto mb-2 flex items-center justify-center`}>
+                  <div className={`w-12 h-12 ${getCategoryColor(category)} rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg`}>
                     {getMilestoneIcon(category, percentage === 100)}
                   </div>
                   <h3 className="font-medium capitalize">{category.replace("_", " ")}</h3>

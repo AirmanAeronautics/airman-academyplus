@@ -57,19 +57,19 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
               <p className="text-sm text-muted-foreground">Total Hours</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{progress.dualHours}</p>
+              <p className="text-2xl font-bold" style={{color: '#3B83F6'}}>{progress.dualHours}</p>
               <p className="text-sm text-muted-foreground">Dual ({Math.round(dualPercentage)}%)</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">{progress.soloHours}</p>
+              <p className="text-2xl font-bold" style={{color: '#BBDFFB'}}>{progress.soloHours}</p>
               <p className="text-sm text-muted-foreground">Solo ({Math.round(soloPercentage)}%)</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">{progress.crossCountryHours}</p>
+              <p className="text-2xl font-bold" style={{color: '#168ADD'}}>{progress.crossCountryHours}</p>
               <p className="text-sm text-muted-foreground">Cross Country</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">{progress.nightHours}</p>
+              <p className="text-2xl font-bold" style={{color: '#1E3A8A'}}>{progress.nightHours}</p>
               <p className="text-sm text-muted-foreground">Night</p>
             </div>
           </div>
@@ -80,7 +80,12 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
                 <span>Dual Instruction</span>
                 <span>{progress.dualHours}h ({Math.round(dualPercentage)}%)</span>
               </div>
-              <Progress value={dualPercentage} className="h-2" />
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full progress-cross-country rounded-full transition-all duration-300" 
+                  style={{ width: `${dualPercentage}%` }}
+                />
+              </div>
             </div>
             
             <div className="space-y-1">
@@ -88,7 +93,12 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
                 <span>Solo Flight</span>
                 <span>{progress.soloHours}h ({Math.round(soloPercentage)}%)</span>
               </div>
-              <Progress value={soloPercentage} className="h-2" />
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full progress-solo rounded-full transition-all duration-300" 
+                  style={{ width: `${soloPercentage}%` }}
+                />
+              </div>
             </div>
             
             <div className="space-y-1">
@@ -96,7 +106,12 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
                 <span>Cross Country</span>
                 <span>{progress.crossCountryHours}h ({Math.round(crossCountryPercentage)}%)</span>
               </div>
-              <Progress value={crossCountryPercentage} className="h-2" />
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full progress-cross-country rounded-full transition-all duration-300" 
+                  style={{ width: `${crossCountryPercentage}%` }}
+                />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -112,19 +127,19 @@ export function ProgressMetrics({ progress }: ProgressMetricsProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-2xl font-bold">{latestScore}%</p>
-              <p className="text-sm text-muted-foreground">Latest Score</p>
+            <div className="text-center p-4 bg-gradient-to-br from-skybg to-skyblue rounded-lg shadow-sm">
+              <p className="text-2xl font-bold text-navy-blue">{latestScore}%</p>
+              <p className="text-sm text-navy-blue/70">Latest Score</p>
             </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
+            <div className="text-center p-4 bg-gradient-to-br from-skybg to-skyblue rounded-lg shadow-sm">
               <p className={`text-2xl font-bold ${improvement >= 0 ? 'text-success' : 'text-destructive'}`}>
                 {improvement >= 0 ? '+' : ''}{improvement}%
               </p>
-              <p className="text-sm text-muted-foreground">Recent Change</p>
+              <p className="text-sm text-navy-blue/70">Recent Change</p>
             </div>
-            <div className="text-center p-4 bg-muted rounded-lg">
-              <p className="text-2xl font-bold">{progress.overallScore}%</p>
-              <p className="text-sm text-muted-foreground">Overall Average</p>
+            <div className="text-center p-4 bg-gradient-to-br from-skybg to-skyblue rounded-lg shadow-sm">
+              <p className="text-2xl font-bold text-navy-blue">{progress.overallScore}%</p>
+              <p className="text-sm text-navy-blue/70">Overall Average</p>
             </div>
           </div>
 

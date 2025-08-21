@@ -158,4 +158,58 @@ All colors MUST be HSL.
   .status-inactive {
     @apply status-indicator bg-muted-foreground;
   }
+
+  /* Abstract Fluid Mesh Gradients for Training Categories */
+  .gradient-solo {
+    background: linear-gradient(135deg, #BBDFFB 0%, #E4F2FD 50%, #BBDFFB 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-cross-country {
+    background: linear-gradient(135deg, #3B83F6 0%, #168ADD 50%, #3B83F6 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-night {
+    background: linear-gradient(135deg, #1E3A8A 0%, #042262 50%, #1E3A8A 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-instrument {
+    background: linear-gradient(135deg, #168ADD 0%, #3B83F6 50%, #168ADD 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-checkride {
+    background: linear-gradient(135deg, #042262 0%, #1E3A8A 50%, #042262 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  /* Subtle mesh gradient for progress bars */
+  .progress-solo {
+    background: linear-gradient(90deg, #BBDFFB, #E4F2FD);
+  }
+  
+  .progress-cross-country {
+    background: linear-gradient(90deg, #3B83F6, #168ADD);
+  }
+  
+  .progress-night {
+    background: linear-gradient(90deg, #1E3A8A, #042262);
+  }
+  
+  .progress-instrument {
+    background: linear-gradient(90deg, #168ADD, #3B83F6);
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }

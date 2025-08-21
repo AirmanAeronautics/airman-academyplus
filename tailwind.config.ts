@@ -74,7 +74,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom aviation color palette
+				skyblue: '#BBDFFB',
+				skybg: '#E4F2FD',
+				'sega-blue': '#3B83F6',
+				'navy-blue': '#1E3A8A',
+				'aviation-blue': '#168ADD',
+				'deep-navy': '#042262'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
