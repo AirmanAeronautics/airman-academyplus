@@ -158,7 +158,7 @@ export default function People() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">People & Progress</h1>
+            <h1 className="text-3xl font-bold text-foreground">Training Report & Progress</h1>
             <p className="text-muted-foreground mt-1">
               Flight training personnel directory - Data synced from Maverick Training Platform
               <span className="ml-2 text-xs bg-muted px-2 py-1 rounded">External Integration</span>

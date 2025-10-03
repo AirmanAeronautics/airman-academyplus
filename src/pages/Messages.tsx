@@ -130,7 +130,7 @@ export default function Messages() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Messages & Communication</h1>
+          <h1 className="text-3xl font-bold text-foreground">Squawk</h1>
           <p className="text-muted-foreground mt-1">Departmental chat and team coordination</p>
         </div>
         <div className="flex gap-2">
