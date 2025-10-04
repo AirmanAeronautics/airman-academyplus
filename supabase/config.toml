@@ -1,1 +1,13 @@
 project_id = "vmzlvvbvidhtvcgqarou"
+
+[functions.roster-plan-create]
+verify_jwt = true
+
+[functions.roster-plan-get]
+verify_jwt = true
+
+[functions.roster-assignments-list]
+verify_jwt = true
+
+[functions.roster-assignment-update]
+verify_jwt = true

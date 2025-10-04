@@ -223,6 +223,89 @@ export type Database = {
         }
         Relationships: []
       }
+      aircraft_availability: {
+        Row: {
+          aircraft_id: string
+          created_at: string
+          end_at: string
+          id: string
+          org_id: string
+          reason: string | null
+          start_at: string
+          state: string
+        }
+        Insert: {
+          aircraft_id: string
+          created_at?: string
+          end_at: string
+          id?: string
+          org_id: string
+          reason?: string | null
+          start_at: string
+          state?: string
+        }
+        Update: {
+          aircraft_id?: string
+          created_at?: string
+          end_at?: string
+          id?: string
+          org_id?: string
+          reason?: string | null
+          start_at?: string
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aircraft_availability_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aircraft_availability_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aircraft_capability: {
+        Row: {
+          aircraft_id: string
+          capability: string
+          created_at: string
+          id: string
+          notes: string | null
+          value: string
+        }
+        Insert: {
+          aircraft_id: string
+          capability: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          value?: string
+        }
+        Update: {
+          aircraft_id?: string
+          capability?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aircraft_capability_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       aircraft_defects: {
         Row: {
           aircraft_id: string
@@ -305,6 +388,56 @@ export type Database = {
             columns: ["reported_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_block: {
+        Row: {
+          created_at: string
+          end_at: string
+          id: string
+          location_icao: string | null
+          notes: string | null
+          org_id: string
+          recurs_rrule: string | null
+          start_at: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_at: string
+          id?: string
+          location_icao?: string | null
+          notes?: string | null
+          org_id: string
+          recurs_rrule?: string | null
+          start_at: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_at?: string
+          id?: string
+          location_icao?: string | null
+          notes?: string | null
+          org_id?: string
+          recurs_rrule?: string | null
+          start_at?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_block_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -624,6 +757,47 @@ export type Database = {
         }
         Relationships: []
       }
+      constraint_policies: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          id: string
+          org_id: string
+          policy_json: Json
+          policy_type: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          org_id: string
+          policy_json?: Json
+          policy_type: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          org_id?: string
+          policy_json?: Json
+          policy_type?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "constraint_policies_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       direct_messages: {
         Row: {
           id: string
@@ -730,6 +904,44 @@ export type Database = {
             columns: ["compliance_item_id"]
             isOneToOne: false
             referencedRelation: "compliance_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      environment_snapshot: {
+        Row: {
+          captured_at: string
+          id: string
+          notams: Json | null
+          org_id: string
+          source_system: string | null
+          traffic: Json | null
+          weather: Json | null
+        }
+        Insert: {
+          captured_at?: string
+          id?: string
+          notams?: Json | null
+          org_id: string
+          source_system?: string | null
+          traffic?: Json | null
+          weather?: Json | null
+        }
+        Update: {
+          captured_at?: string
+          id?: string
+          notams?: Json | null
+          org_id?: string
+          source_system?: string | null
+          traffic?: Json | null
+          weather?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "environment_snapshot_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -947,6 +1159,7 @@ export type Database = {
           instructor_id: string | null
           lesson_plan: string | null
           org_id: string
+          roster_assignment_id: string | null
           route: string | null
           scheduled_end: string | null
           scheduled_start: string | null
@@ -974,6 +1187,7 @@ export type Database = {
           instructor_id?: string | null
           lesson_plan?: string | null
           org_id: string
+          roster_assignment_id?: string | null
           route?: string | null
           scheduled_end?: string | null
           scheduled_start?: string | null
@@ -1001,6 +1215,7 @@ export type Database = {
           instructor_id?: string | null
           lesson_plan?: string | null
           org_id?: string
+          roster_assignment_id?: string | null
           route?: string | null
           scheduled_end?: string | null
           scheduled_start?: string | null
@@ -1025,6 +1240,13 @@ export type Database = {
             columns: ["instructor_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_sessions_roster_assignment_id_fkey"
+            columns: ["roster_assignment_id"]
+            isOneToOne: false
+            referencedRelation: "roster_assignment"
             referencedColumns: ["id"]
           },
           {
@@ -1321,6 +1543,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      lesson_catalog: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_min: number
+          id: string
+          is_active: boolean | null
+          name: string
+          org_id: string
+          program: string
+          requirements: Json
+          stage: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_min: number
+          id?: string
+          is_active?: boolean | null
+          name: string
+          org_id: string
+          program: string
+          requirements?: Json
+          stage?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_min?: number
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          org_id?: string
+          program?: string
+          requirements?: Json
+          stage?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_catalog_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maintenance_events: {
         Row: {
@@ -1771,6 +2043,133 @@ export type Database = {
           },
           {
             foreignKeyName: "profiles_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roster_assignment: {
+        Row: {
+          aircraft_id: string | null
+          airport_icao: string
+          created_at: string
+          end_at: string
+          feasibility_proof: Json | null
+          id: string
+          instructor_id: string | null
+          lesson_id: string | null
+          org_id: string
+          plan_id: string
+          score_breakdown: Json | null
+          start_at: string
+          status: string
+          student_id: string
+          sync_state: Json | null
+          updated_at: string
+        }
+        Insert: {
+          aircraft_id?: string | null
+          airport_icao: string
+          created_at?: string
+          end_at: string
+          feasibility_proof?: Json | null
+          id?: string
+          instructor_id?: string | null
+          lesson_id?: string | null
+          org_id: string
+          plan_id: string
+          score_breakdown?: Json | null
+          start_at: string
+          status?: string
+          student_id: string
+          sync_state?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          aircraft_id?: string | null
+          airport_icao?: string
+          created_at?: string
+          end_at?: string
+          feasibility_proof?: Json | null
+          id?: string
+          instructor_id?: string | null
+          lesson_id?: string | null
+          org_id?: string
+          plan_id?: string
+          score_breakdown?: Json | null
+          start_at?: string
+          status?: string
+          student_id?: string
+          sync_state?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roster_assignment_aircraft_id_fkey"
+            columns: ["aircraft_id"]
+            isOneToOne: false
+            referencedRelation: "aircraft"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roster_assignment_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roster_assignment_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roster_assignment_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "roster_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roster_plan: {
+        Row: {
+          created_at: string
+          id: string
+          objective_weights: Json | null
+          org_id: string
+          period_end: string
+          period_start: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          objective_weights?: Json | null
+          org_id: string
+          period_end: string
+          period_start: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          objective_weights?: Json | null
+          org_id?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roster_plan_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
