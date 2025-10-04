@@ -17,3 +17,9 @@ verify_jwt = true
 
 [functions.roster-score-assignment]
 verify_jwt = true
+
+[functions.roster-solve]
+verify_jwt = true
+
+[functions.roster-replan-trigger]
+verify_jwt = true

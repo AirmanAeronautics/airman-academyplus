@@ -2050,6 +2050,56 @@ export type Database = {
           },
         ]
       }
+      roster_alternative_solutions: {
+        Row: {
+          alternative_assignment: Json
+          created_at: string
+          generated_at: string
+          id: string
+          org_id: string
+          original_assignment_id: string | null
+          score_breakdown: Json
+          status: string
+          trigger_details: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          alternative_assignment?: Json
+          created_at?: string
+          generated_at?: string
+          id?: string
+          org_id: string
+          original_assignment_id?: string | null
+          score_breakdown?: Json
+          status?: string
+          trigger_details?: Json
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          alternative_assignment?: Json
+          created_at?: string
+          generated_at?: string
+          id?: string
+          org_id?: string
+          original_assignment_id?: string | null
+          score_breakdown?: Json
+          status?: string
+          trigger_details?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roster_alternative_solutions_original_assignment_id_fkey"
+            columns: ["original_assignment_id"]
+            isOneToOne: false
+            referencedRelation: "roster_assignment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       roster_assignment: {
         Row: {
           aircraft_id: string | null
