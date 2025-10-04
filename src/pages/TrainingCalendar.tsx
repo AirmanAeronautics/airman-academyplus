@@ -62,9 +62,9 @@ export default function TrainingCalendar() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Training Calendar</h1>
+          <h1 className="text-3xl font-bold text-foreground">Crew Roster & Schedule</h1>
           <p className="text-muted-foreground mt-1">
-            Drag-and-drop scheduling with AI conflict resolution
+            AI-driven dynamic scheduling with real-time weather, NOTAMs, and resource optimization
           </p>
         </div>
       </div>
