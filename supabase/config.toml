@@ -14,3 +14,6 @@ verify_jwt = true
 
 [functions.roster-feasibility-check]
 verify_jwt = true
+
+[functions.roster-score-assignment]
+verify_jwt = true
