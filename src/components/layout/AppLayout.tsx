@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Zap, RotateCcw } from "lucide-react";
 import { useDemo } from "@/contexts/DemoContext";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
             
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <NotificationCenter />
               {profile && (
                 <div className="flex items-center gap-3">

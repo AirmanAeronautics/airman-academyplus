@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDemo } from '@/contexts/DemoContext';
+import { useTheme } from 'next-themes';
 import { 
   Users, 
   Settings, 
@@ -28,13 +29,18 @@ import {
   Mail,
   UserPlus,
   Calendar,
-  DollarSign
+  DollarSign,
+  Palette,
+  Sun,
+  Moon,
+  Monitor
 } from 'lucide-react';
 
 export default function AdminSettings() {
   const { profile } = useAuth();
   const { toast } = useToast();
   const { isDemoMode } = useDemo();
+  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState<any>(null);
   const [organization, setOrganization] = useState<any>(null);
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
@@ -290,7 +296,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
+        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-11">
           <TabsTrigger value="organization" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
             <span className="hidden sm:inline">Org</span>
@@ -330,6 +336,10 @@ export default function AdminSettings() {
           <TabsTrigger value="training" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span className="hidden sm:inline">Training</span>
+          </TabsTrigger>
+          <TabsTrigger value="appearance" className="flex items-center gap-2">
+            <Palette className="h-4 w-4" />
+            <span className="hidden sm:inline">Theme</span>
           </TabsTrigger>
         </TabsList>
 
@@ -792,6 +802,129 @@ export default function AdminSettings() {
                     <Button variant="outline" size="sm">View Progress</Button>
                   </CardContent>
                 </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Appearance Settings */}
+        <TabsContent value="appearance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5" />
+                Theme Settings
+              </CardTitle>
+              <CardDescription>Customize the appearance of your application</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <Label className="text-base">Color Theme</Label>
+                <p className="text-sm text-muted-foreground">
+                  Choose how the interface should appear. System will automatically match your device's theme.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  {/* Light Theme */}
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${theme === 'light' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => setTheme('light')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Sun className="h-5 w-5 text-primary" />
+                          <span className="font-medium">Light</span>
+                        </div>
+                        {theme === 'light' && <CheckCircle className="h-5 w-5 text-primary" />}
+                      </div>
+                      <div className="rounded-md border-2 overflow-hidden">
+                        <div className="bg-white p-3 space-y-2">
+                          <div className="h-2 bg-slate-200 rounded w-3/4"></div>
+                          <div className="h-2 bg-slate-200 rounded w-1/2"></div>
+                          <div className="flex gap-2 mt-3">
+                            <div className="h-6 bg-blue-500 rounded flex-1"></div>
+                            <div className="h-6 bg-slate-200 rounded flex-1"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Clean and bright interface ideal for well-lit environments
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Dark Theme */}
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${theme === 'dark' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => setTheme('dark')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Moon className="h-5 w-5 text-primary" />
+                          <span className="font-medium">Dark</span>
+                        </div>
+                        {theme === 'dark' && <CheckCircle className="h-5 w-5 text-primary" />}
+                      </div>
+                      <div className="rounded-md border-2 overflow-hidden">
+                        <div className="bg-slate-950 p-3 space-y-2">
+                          <div className="h-2 bg-slate-700 rounded w-3/4"></div>
+                          <div className="h-2 bg-slate-700 rounded w-1/2"></div>
+                          <div className="flex gap-2 mt-3">
+                            <div className="h-6 bg-blue-600 rounded flex-1"></div>
+                            <div className="h-6 bg-slate-700 rounded flex-1"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Reduces eye strain in low-light conditions
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  {/* System Theme */}
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${theme === 'system' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => setTheme('system')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Monitor className="h-5 w-5 text-primary" />
+                          <span className="font-medium">System</span>
+                        </div>
+                        {theme === 'system' && <CheckCircle className="h-5 w-5 text-primary" />}
+                      </div>
+                      <div className="rounded-md border-2 overflow-hidden">
+                        <div className="bg-gradient-to-br from-white to-slate-950 p-3 space-y-2">
+                          <div className="h-2 bg-slate-400 rounded w-3/4"></div>
+                          <div className="h-2 bg-slate-400 rounded w-1/2"></div>
+                          <div className="flex gap-2 mt-3">
+                            <div className="h-6 bg-blue-500 rounded flex-1"></div>
+                            <div className="h-6 bg-slate-400 rounded flex-1"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Automatically matches your device's appearance settings
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  About Theme Settings
+                </h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Your theme preference is saved locally in your browser</li>
+                  <li>• System theme automatically adjusts based on your device's settings</li>
+                  <li>• Dark mode is optimized for reduced eye strain during night operations</li>
+                  <li>• Theme changes apply instantly across all pages</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
