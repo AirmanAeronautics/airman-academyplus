@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { type User } from "@/data/users"
 import { useAuth } from "@/hooks/useAuth"
+import { getUserRoles, hasRole } from "@/lib/roleUtils"
 
 // ---- ROLE MODEL -------------------------------------------------------------
 
@@ -173,7 +174,8 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
   const currentPath = location.pathname
   const collapsed = state === "collapsed"
 
-  const role = currentUser?.role || "ops_manager"
+  const userRoles = getUserRoles(currentUser)
+  const isSuperAdmin = hasRole(currentUser, "super_admin")
 
   const isActive = (path: string) => {
     if (path === "/" && currentPath === "/") return true
@@ -246,7 +248,9 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
           <SidebarGroupContent className="px-2">
             <SidebarMenu className="space-y-1">
               {navigationItems
-                .filter((item) => item.roles.includes(role) || role === 'super_admin')
+                .filter((item) => 
+                  isSuperAdmin || userRoles.some(role => item.roles.includes(role as AcademyRole))
+                )
                 .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild className="h-auto p-0">

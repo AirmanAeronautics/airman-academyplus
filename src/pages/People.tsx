@@ -111,7 +111,7 @@ export default function People() {
   const [filterType, setFilterType] = useState("all")
   const [activeTab, setActiveTab] = useState("directory")
   // Use actual authenticated user's role for permissions
-  const permissions = getUserPermissions(profile?.role)
+  const permissions = getUserPermissions(profile)
 
   // Mock student progress data
   const mockStudentProgress = {

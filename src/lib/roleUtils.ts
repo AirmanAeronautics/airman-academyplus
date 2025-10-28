@@ -15,7 +15,7 @@ export const TRAINING_ROLES = ["student", "instructor"] as const;
 export const STAFF_ROLES = ["admin", "super_admin", "ops_manager", "maintenance_officer", "compliance_officer", "accounts_officer", "marketing_crm", "support"] as const;
 
 // Helper to extract roles from profile (supports both legacy and new system)
-function getUserRoles(profile: any): string[] {
+export function getUserRoles(profile: any): string[] {
   const roles: string[] = [];
   
   // New system: user_roles array

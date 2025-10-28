@@ -18,11 +18,10 @@ export function RoleGuard({
   fallback
 }: RoleGuardProps) {
   const { profile } = useAuth();
-  const userRole = profile?.role;
-  const permissions = getUserPermissions(userRole);
+  const permissions = getUserPermissions(profile);
 
-  // Check role-based access
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
+  // Check role-based access (supports multi-role)
+  if (allowedRoles && !permissions.roles.some(role => allowedRoles.includes(role))) {
     return fallback || <AccessDenied />;
   }
 
