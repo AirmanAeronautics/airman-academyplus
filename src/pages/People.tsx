@@ -161,8 +161,8 @@ export default function People() {
           <div>
             <h1 className="text-3xl font-bold text-foreground">Flight Training Analytics</h1>
             <p className="text-muted-foreground mt-1">
-              Flight training personnel directory - Data synced from Maverick Training Platform
-              <span className="ml-2 text-xs bg-muted px-2 py-1 rounded">External Integration</span>
+              Comprehensive analytics for student progress, performance metrics, and training outcomes
+              <span className="ml-2 text-xs bg-muted px-2 py-1 rounded">Real-time Data</span>
             </p>
           </div>
           <div className="flex items-center gap-4">
