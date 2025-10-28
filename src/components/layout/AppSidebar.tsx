@@ -93,7 +93,7 @@ const navigationItems: NavItem[] = [
     roles: ["admin", "ops_manager"],
   },
   {
-    title: "Training Personnel",
+    title: "Training Analytics",
     url: "/people",
     icon: Users,
     roles: ["admin", "ops_manager"],
