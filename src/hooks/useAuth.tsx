@@ -158,7 +158,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setProfileLoading(true);
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('*, organizations(name, domain)')
+        .select(`
+          *, 
+          organizations(name, domain),
+          user_roles(role, org_id, assigned_at, is_active)
+        `)
         .eq('id', user.id)
         .single();
 

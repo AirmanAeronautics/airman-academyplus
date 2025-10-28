@@ -92,7 +92,11 @@ async function performOnboardingAttempt(session: Session): Promise<OnboardingRes
   // First, check if profile already exists and is properly set up
   const { data: existingProfile, error: profileError } = await supabase
     .from('profiles')
-    .select('*, organizations(name, domain)')
+    .select(`
+      *, 
+      organizations(name, domain),
+      user_roles(role, org_id, assigned_at, is_active)
+    `)
     .eq('id', user.id)
     .single();
 
@@ -240,7 +244,11 @@ async function performOnboardingAttempt(session: Session): Promise<OnboardingRes
       onConflict: 'id',
       ignoreDuplicates: false
     })
-    .select('*, organizations(name, domain)')
+    .select(`
+      *, 
+      organizations(name, domain),
+      user_roles(role, org_id, assigned_at, is_active)
+    `)
     .single();
 
   if (upsertError) {
