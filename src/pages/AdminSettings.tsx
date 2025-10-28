@@ -298,54 +298,30 @@ export default function AdminSettings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
+        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 gap-2">
           <TabsTrigger value="organization" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">Org</span>
+            <span>Organization</span>
           </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Users</span>
-          </TabsTrigger>
-          <TabsTrigger value="fleet" className="flex items-center gap-2">
+          <TabsTrigger value="operations" className="flex items-center gap-2">
             <Plane className="h-4 w-4" />
-            <span className="hidden sm:inline">Fleet</span>
+            <span>Operations</span>
           </TabsTrigger>
           <TabsTrigger value="finance" className="flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
-            <span className="hidden sm:inline">Finance</span>
+            <span>Finance</span>
           </TabsTrigger>
-          <TabsTrigger value="compliance" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            <span className="hidden sm:inline">Safety</span>
-          </TabsTrigger>
-          <TabsTrigger value="communication" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">Comms</span>
+          <TabsTrigger value="system" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            <span>System</span>
           </TabsTrigger>
           <TabsTrigger value="integrations" className="flex items-center gap-2">
             <Plug className="h-4 w-4" />
-            <span className="hidden sm:inline">Integrations</span>
-          </TabsTrigger>
-          <TabsTrigger value="integration" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">API</span>
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">Reports</span>
-          </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Logs</span>
-          </TabsTrigger>
-          <TabsTrigger value="training" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span className="hidden sm:inline">Training</span>
+            <span>Integrations</span>
           </TabsTrigger>
           <TabsTrigger value="appearance" className="flex items-center gap-2">
             <Palette className="h-4 w-4" />
-            <span className="hidden sm:inline">Theme</span>
+            <span>Appearance</span>
           </TabsTrigger>
         </TabsList>
 
@@ -420,10 +396,7 @@ export default function AdminSettings() {
               </CardContent>
             </Card>
           )}
-        </TabsContent>
 
-        {/* User Management */}
-        <TabsContent value="users" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -507,8 +480,9 @@ export default function AdminSettings() {
           </Card>
         </TabsContent>
 
-        {/* Fleet Management */}
-        <TabsContent value="fleet" className="space-y-6">
+        {/* Operations Management */}
+        <TabsContent value="operations" className="space-y-6">
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -548,46 +522,8 @@ export default function AdminSettings() {
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        {/* Financial Administration */}
-        <TabsContent value="finance" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                Financial Overview
-              </CardTitle>
-              <CardDescription>Billing and payment settings</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">$12,450</div>
-                    <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">$890</div>
-                    <p className="text-sm text-muted-foreground">Outstanding</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">24</div>
-                    <p className="text-sm text-muted-foreground">Active Students</p>
-                  </CardContent>
-                </Card>
-              </div>
-              <Button>Configure Billing Settings</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Compliance & Safety */}
-        <TabsContent value="compliance" className="space-y-6">
+          {/* Compliance & Safety */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -625,151 +561,8 @@ export default function AdminSettings() {
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        {/* Communication Settings */}
-        <TabsContent value="communication" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Notification Settings
-              </CardTitle>
-              <CardDescription>Configure system notifications and alerts</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Send email alerts for critical events</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Maintenance Alerts</Label>
-                    <p className="text-sm text-muted-foreground">Alert when aircraft require maintenance</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Compliance Expiry Warnings</Label>
-                    <p className="text-sm text-muted-foreground">Warn 30 days before compliance expires</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* System Integration */}
-        <TabsContent value="integration" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Database className="h-5 w-5" />
-                API & Integration Settings
-              </CardTitle>
-              <CardDescription>Manage external integrations and API access</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">API Access</h4>
-                <p className="text-sm text-muted-foreground mb-4">Generate API keys for external integrations</p>
-                <Button variant="outline">Generate API Key</Button>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">Data Export</h4>
-                <p className="text-sm text-muted-foreground mb-4">Export your organization's data</p>
-                <Button variant="outline">Export Data</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Analytics & Reporting */}
-        <TabsContent value="analytics" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Usage Analytics
-              </CardTitle>
-              <CardDescription>View system usage and performance metrics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">1,247</div>
-                    <p className="text-sm text-muted-foreground">Total Flight Hours</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">89%</div>
-                    <p className="text-sm text-muted-foreground">Aircraft Utilization</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">34</div>
-                    <p className="text-sm text-muted-foreground">Active Users</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">12</div>
-                    <p className="text-sm text-muted-foreground">Pending Items</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* System Administration */}
-        <TabsContent value="system" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                System Event Logs
-              </CardTitle>
-              <CardDescription>Recent system activity and events</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Message</TableHead>
-                    <TableHead>Time</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {eventLogs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell>
-                        <Badge variant="outline">{log.type}</Badge>
-                      </TableCell>
-                      <TableCell>{log.category}</TableCell>
-                      <TableCell className="max-w-md truncate">{log.message}</TableCell>
-                      <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Training Programs */}
-        <TabsContent value="training" className="space-y-6">
+          {/* Training Programs */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -811,6 +604,177 @@ export default function AdminSettings() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Financial Administration */}
+        <TabsContent value="finance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Financial Overview
+              </CardTitle>
+              <CardDescription>Billing and payment settings</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">$12,450</div>
+                    <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">$890</div>
+                    <p className="text-sm text-muted-foreground">Outstanding</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">24</div>
+                    <p className="text-sm text-muted-foreground">Active Students</p>
+                  </CardContent>
+                </Card>
+              </div>
+              <Button>Configure Billing Settings</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* System Settings */}
+        <TabsContent value="system" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Notification Settings
+              </CardTitle>
+              <CardDescription>Configure system notifications and alerts</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Email Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Send email alerts for critical events</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Maintenance Alerts</Label>
+                    <p className="text-sm text-muted-foreground">Alert when aircraft require maintenance</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Compliance Expiry Warnings</Label>
+                    <p className="text-sm text-muted-foreground">Warn 30 days before compliance expires</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                API & Integration Settings
+              </CardTitle>
+              <CardDescription>Manage external integrations and API access</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 border rounded-lg">
+                <h4 className="font-medium mb-2">API Access</h4>
+                <p className="text-sm text-muted-foreground mb-4">Generate API keys for external integrations</p>
+                <Button variant="outline">Generate API Key</Button>
+              </div>
+              <div className="p-4 border rounded-lg">
+                <h4 className="font-medium mb-2">Data Export</h4>
+                <p className="text-sm text-muted-foreground mb-4">Export your organization's data</p>
+                <Button variant="outline">Export Data</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Usage Analytics
+              </CardTitle>
+              <CardDescription>View system usage and performance metrics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">1,247</div>
+                    <p className="text-sm text-muted-foreground">Total Flight Hours</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">89%</div>
+                    <p className="text-sm text-muted-foreground">Aircraft Utilization</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">34</div>
+                    <p className="text-sm text-muted-foreground">Active Users</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="text-2xl font-bold">12</div>
+                    <p className="text-sm text-muted-foreground">Pending Items</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                System Event Logs
+              </CardTitle>
+              <CardDescription>Recent system activity and events</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Message</TableHead>
+                    <TableHead>Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {eventLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell>
+                        <Badge variant="outline">{log.type}</Badge>
+                      </TableCell>
+                      <TableCell>{log.category}</TableCell>
+                      <TableCell className="max-w-md truncate">{log.message}</TableCell>
+                      <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Integrations Hub */}
+        <TabsContent value="integrations" className="space-y-6">
+          <IntegrationsHub />
         </TabsContent>
 
         {/* Appearance Settings */}
