@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Search, Filter, GraduationCap, Calendar, Clock, BookOpen, Plane, MessageSquare, BarChart3, Bot, UserCheck } from "lucide-react"
+import { Search, Filter, GraduationCap, Calendar, Clock, BookOpen, Plane, MessageSquare, BarChart3, Bot, UserCheck, Download, FileText } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { RoleGuard } from "@/components/access/RoleGuard"
 import { MILESTONES_PPL, AVAILABLE_BADGES } from "@/types/progress"
 import { useAuth } from "@/hooks/useAuth"
 import { getUserPermissions, getRoleDisplayName } from "@/lib/roleUtils"
+import { RegulatoryExportPanel } from "@/components/reports/RegulatoryExportPanel"
 
 const pilots = [
   // Students
@@ -158,7 +159,7 @@ export default function People() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Training Report & Progress</h1>
+            <h1 className="text-3xl font-bold text-foreground">Training Personnel & Progress</h1>
             <p className="text-muted-foreground mt-1">
               Flight training personnel directory - Data synced from Maverick Training Platform
               <span className="ml-2 text-xs bg-muted px-2 py-1 rounded">External Integration</span>
@@ -176,7 +177,7 @@ export default function People() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={`grid w-full ${permissions.canViewStudentProgress ? 'grid-cols-3' : 'grid-cols-1'}`}>
+          <TabsList className={`grid w-full ${permissions.canViewStudentProgress ? 'grid-cols-4' : 'grid-cols-1'}`}>
             <TabsTrigger value="directory">
               {permissions.isStudent ? "Training Directory" : "Directory"}
             </TabsTrigger>
@@ -184,6 +185,10 @@ export default function People() {
               <>
                 <TabsTrigger value="student-progress">Student Progress</TabsTrigger>
                 <TabsTrigger value="instructor-dashboard">Readiness Dashboard</TabsTrigger>
+                <TabsTrigger value="reports">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Reports
+                </TabsTrigger>
               </>
             )}
           </TabsList>
@@ -444,6 +449,41 @@ export default function People() {
           {permissions.canViewStudentProgress && (
             <TabsContent value="instructor-dashboard" className="space-y-6">
               <StudentReadinessDashboard instructorId={profile?.id || "1"} />
+            </TabsContent>
+          )}
+
+          {permissions.canViewStudentProgress && (
+            <TabsContent value="reports" className="space-y-6">
+              {/* Regulatory Export */}
+              <RegulatoryExportPanel />
+              
+              {/* Training Reports */}
+              <Card className="aviation-card">
+                <CardHeader>
+                  <CardTitle>Training Reports</CardTitle>
+                  <CardDescription>Generate and export training records and progress reports</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                      <GraduationCap className="h-5 w-5" />
+                      <span className="text-sm">Student Progress</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      <span className="text-sm">Flight Hours</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                      <UserCheck className="h-5 w-5" />
+                      <span className="text-sm">Instructor Report</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                      <BarChart3 className="h-5 w-5" />
+                      <span className="text-sm">Course Completion</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           )}
         </Tabs>

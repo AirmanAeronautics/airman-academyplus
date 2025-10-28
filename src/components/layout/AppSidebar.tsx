@@ -87,25 +87,13 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    title: "Admin Settings",
-    url: "/admin/settings",
-    icon: Settings,
-    roles: ["admin"],
-  },
-  {
-    title: "Pending Requests",
-    url: "/admin/pending-requests",
-    icon: UserCheck,
-    roles: ["admin"],
-  },
-  {
     title: "Training Calendar",
     url: "/calendar",
     icon: Calendar,
     roles: ["admin", "ops_manager"],
   },
   {
-    title: "Training Report",
+    title: "Training Personnel",
     url: "/people",
     icon: Users,
     roles: ["admin", "ops_manager"],
@@ -127,12 +115,6 @@ const navigationItems: NavItem[] = [
     url: "/finance",
     icon: DollarSign,
     roles: ["admin", "accounts_officer"],
-  },
-  {
-    title: "Reports",
-    url: "/reports",
-    icon: FileBarChart,
-    roles: ["admin", "ops_manager", "accounts_officer", "compliance_officer"],
   },
   {
     title: "Marketing & CRM",
@@ -159,6 +141,12 @@ const navigationItems: NavItem[] = [
       "marketing_crm",
       "support",
     ],
+  },
+  {
+    title: "Admin Settings",
+    url: "/admin/settings",
+    icon: Settings,
+    roles: ["admin"],
   },
 ]
 

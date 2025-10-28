@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
+import { RegulatoryExportPanel } from "@/components/reports/RegulatoryExportPanel"
 
 const expiringDocuments = [
   {
@@ -293,9 +294,12 @@ export default function Compliance() {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-4">
+          {/* Regulatory Export Panel */}
+          <RegulatoryExportPanel />
+          
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Regulatory Reports</h3>
+              <h3 className="text-lg font-semibold">Compliance Reports</h3>
               <Button variant="outline" size="sm">
                 <Bot className="h-4 w-4 mr-2" />
                 AI Generate All

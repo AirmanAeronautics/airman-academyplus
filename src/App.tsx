@@ -17,7 +17,6 @@ if (process.env.NODE_ENV === 'development') {
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AdminSettings from "./pages/AdminSettings";
-import PendingRequests from "./pages/PendingRequests";
 import EventLog from "./pages/EventLog";
 import TrainingCalendar from "./pages/TrainingCalendar";
 import People from "./pages/People";
@@ -50,7 +49,6 @@ const App = () => (
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/admin/settings" element={<AdminSettings />} />
-                      <Route path="/admin/pending-requests" element={<PendingRequests />} />
                       <Route path="/events" element={<EventLog />} />
                       <Route path="/calendar" element={<TrainingCalendar />} />
                       <Route path="/people" element={<People />} />

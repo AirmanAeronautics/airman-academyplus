@@ -305,64 +305,95 @@ export default function Finance() {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            {/* Quick Export Options */}
             <Card className="aviation-card">
               <CardHeader>
-                <CardTitle>Revenue Trends</CardTitle>
-                <CardDescription>Monthly revenue vs targets</CardDescription>
+                <CardTitle>Financial Reports</CardTitle>
+                <CardDescription>Generate and export financial data</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {revenueData.map((month, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>{month.month} 2024</span>
-                        <span className="font-medium">£{month.revenue.toLocaleString()}</span>
-                      </div>
-                      <Progress value={(month.revenue / month.target) * 100} className="h-2" />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Target: £{month.target.toLocaleString()}</span>
-                        <span>{Math.round((month.revenue / month.target) * 100)}%</span>
-                      </div>
-                    </div>
-                  ))}
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    <span className="text-sm">Invoice Report</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    <span className="text-sm">Revenue Report</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    <span className="text-sm">Payment Report</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    <span className="text-sm">P&L Statement</span>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="aviation-card">
-              <CardHeader>
-                <CardTitle>Financial Summary</CardTitle>
-                <CardDescription>Key metrics and insights</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span>Total Invoiced (YTD)</span>
-                    <span className="font-medium">£{totalRevenue.toLocaleString()}</span>
+            {/* Financial Metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="aviation-card">
+                <CardHeader>
+                  <CardTitle>Revenue Trends</CardTitle>
+                  <CardDescription>Monthly revenue vs targets</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {revenueData.map((month, idx) => (
+                      <div key={idx} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>{month.month} 2024</span>
+                          <span className="font-medium">£{month.revenue.toLocaleString()}</span>
+                        </div>
+                        <Progress value={(month.revenue / month.target) * 100} className="h-2" />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Target: £{month.target.toLocaleString()}</span>
+                          <span>{Math.round((month.revenue / month.target) * 100)}%</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between">
-                    <span>Outstanding Receivables</span>
-                    <span className="font-medium">£{(pendingAmount + overdueAmount).toLocaleString()}</span>
+                </CardContent>
+              </Card>
+
+              <Card className="aviation-card">
+                <CardHeader>
+                  <CardTitle>Financial Summary</CardTitle>
+                  <CardDescription>Key metrics and insights</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <span>Total Invoiced (YTD)</span>
+                      <span className="font-medium">£{totalRevenue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Outstanding Receivables</span>
+                      <span className="font-medium">£{(pendingAmount + overdueAmount).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Average Invoice Value</span>
+                      <span className="font-medium">£{Math.round(invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Collection Rate</span>
+                      <span className="font-medium text-success">
+                        {Math.round((invoices.filter(i => i.status === 'paid').length / invoices.length) * 100)}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Average Invoice Value</span>
-                    <span className="font-medium">£{Math.round(invoices.reduce((sum, inv) => sum + inv.amount, 0) / invoices.length).toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Collection Rate</span>
-                    <span className="font-medium text-success">
-                      {Math.round((invoices.filter(i => i.status === 'paid').length / invoices.length) * 100)}%
-                    </span>
-                  </div>
-                </div>
-                
-                <Button className="w-full mt-4" variant="outline">
-                  <Bot className="h-4 w-4 mr-2" />
-                  Generate Full Report
-                </Button>
-              </CardContent>
-            </Card>
+                  
+                  <Button className="w-full mt-4" variant="outline">
+                    <Bot className="h-4 w-4 mr-2" />
+                    Generate Full Report
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
 
