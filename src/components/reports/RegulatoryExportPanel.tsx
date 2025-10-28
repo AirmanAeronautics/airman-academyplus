@@ -71,51 +71,40 @@ export const RegulatoryExportPanel = () => {
 
   return (
     <Card className="aviation-card">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Download className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Download className="h-4 w-4" />
           Regulatory Export
         </CardTitle>
-        <CardDescription>
-          Export flight logs for {userAuthorityConfig.name}
-        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Card className="border-2 hover:border-primary/50 transition-colors">
-          <CardContent className="p-6 text-center">
-            <div className="text-6xl mb-4">{userAuthorityConfig.flag}</div>
-            <h3 className="font-bold text-2xl mb-2">{userAuthorityConfig.code}</h3>
-            <p className="text-sm text-muted-foreground mb-3">
-              {userAuthorityConfig.name}
-            </p>
-            <Badge variant="outline" className="mb-4">
-              {userAuthorityConfig.format}
-            </Badge>
-            <Button 
-              size="lg" 
-              className="w-full"
-              onClick={() => handleExport(userAuthorityConfig.code)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Download className="h-4 w-4 mr-2 animate-pulse" />
-                  Exporting...
-                </>
-              ) : (
-                <>
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Flight Records
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-        
-        <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-          <p className="text-sm text-muted-foreground">
-            Exports last 12 months of flight data in {userAuthorityConfig.format} format as required by {userAuthorityConfig.name}.
-          </p>
+        <div className="text-center space-y-3">
+          <div className="text-4xl">{userAuthorityConfig.flag}</div>
+          <div>
+            <h3 className="font-bold text-lg">{userAuthorityConfig.code}</h3>
+            <p className="text-xs text-muted-foreground">{userAuthorityConfig.name}</p>
+          </div>
+          <Badge variant="outline" className="text-xs">
+            {userAuthorityConfig.format}
+          </Badge>
+          <Button 
+            size="sm" 
+            className="w-full"
+            onClick={() => handleExport(userAuthorityConfig.code)}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Download className="h-3 w-3 mr-2 animate-pulse" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="h-3 w-3 mr-2" />
+                Export Records
+              </>
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
