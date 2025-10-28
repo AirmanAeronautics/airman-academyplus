@@ -13,7 +13,6 @@ import {
   UserCheck,
   FileBarChart,
 } from "lucide-react"
-import airmanLogo from "@/assets/airman-logo.png"
 
 import {
   Sidebar,
@@ -191,8 +190,8 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
     <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarHeader className="border-b border-border bg-gradient-to-r from-primary to-primary/70">
         <div className="flex items-center gap-3 px-4 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(202,77%,48%)] overflow-hidden">
-            <img src={airmanLogo} alt="Airman Academy" className="h-full w-full object-contain" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-primary font-bold">
+            A+
           </div>
           {!collapsed && (
             <div className="flex flex-col">
