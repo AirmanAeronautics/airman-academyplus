@@ -111,3 +111,71 @@ export const exportLeadsReport = (leads: any[]) => {
     `leads-report-${new Date().toISOString().split('T')[0]}.csv`
   );
 };
+
+// Flight hours report - aggregated by student/instructor/aircraft
+export const exportFlightHoursReport = (
+  data: any[], 
+  groupBy: 'student' | 'instructor' | 'aircraft' = 'student'
+) => {
+  const exportData = data.map(item => ({
+    [groupBy === 'student' ? 'Student' : groupBy === 'instructor' ? 'Instructor' : 'Aircraft']: 
+      item.name || item.id,
+    "Total Hours": item.total_hours || item.flight_duration_hours || 0,
+    "Solo Hours": item.solo_hours || 0,
+    "Dual Hours": item.dual_hours || 0,
+    "Cross Country Hours": item.cross_country_hours || 0,
+    "Night Hours": item.night_hours || 0,
+    "Instrument Hours": item.instrument_hours || 0,
+    "Flight Count": item.flight_count || 1,
+    "Average Duration": item.average_duration || item.flight_duration_hours || 0,
+    "Course": item.course || "",
+    "Status": item.status || "active"
+  }));
+
+  CSVExporter.downloadCSV(
+    exportData,
+    `flight-hours-${groupBy}-${new Date().toISOString().split('T')[0]}.csv`
+  );
+};
+
+// Attendance and renewals report
+export const exportAttendanceReport = (data: any[]) => {
+  const exportData = data.map(item => ({
+    "Name": item.name,
+    "Role": item.role,
+    "Last Flight": item.last_flight || "",
+    "Medical Expiry": item.medical_expiry || "",
+    "License Expiry": item.license_expiry || "",
+    "Currency Status": item.currency_status || "Current",
+    "Missed Sessions": item.missed_sessions || 0,
+    "Attendance Rate": item.attendance_rate ? `${item.attendance_rate}%` : "N/A",
+    "Days Until Medical Expiry": item.days_until_medical_expiry || "",
+    "Training Currency": item.training_currency || "Valid"
+  }));
+
+  CSVExporter.downloadCSV(
+    exportData,
+    `attendance-report-${new Date().toISOString().split('T')[0]}.csv`
+  );
+};
+
+// Operations report - aircraft utilization
+export const exportOperationsReport = (data: any[]) => {
+  const exportData = data.map(item => ({
+    "Aircraft Registration": item.registration,
+    "Type": item.aircraft_type || item.make_model,
+    "Total Hours": item.total_hours || 0,
+    "Flight Count": item.flight_count || 0,
+    "Average Duration": item.average_duration || 0,
+    "Utilization %": item.utilization_percent || 0,
+    "Hours Since Maintenance": item.hours_since_maintenance || 0,
+    "Next Maintenance": item.next_inspection || "",
+    "Status": item.status || "available",
+    "Location": item.location || ""
+  }));
+
+  CSVExporter.downloadCSV(
+    exportData,
+    `operations-report-${new Date().toISOString().split('T')[0]}.csv`
+  );
+};

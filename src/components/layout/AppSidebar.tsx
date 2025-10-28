@@ -11,6 +11,7 @@ import {
   Megaphone, // for Marketing & CRM
   Settings,
   UserCheck,
+  FileBarChart,
 } from "lucide-react"
 
 import {
@@ -125,6 +126,12 @@ const navigationItems: NavItem[] = [
     url: "/finance",
     icon: DollarSign,
     roles: ["admin", "accounts_officer"],
+  },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: FileBarChart,
+    roles: ["admin", "ops_manager", "accounts_officer", "compliance_officer"],
   },
   {
     title: "Marketing & CRM",

@@ -1106,6 +1106,81 @@ export type Database = {
         }
         Relationships: []
       }
+      flight_hours_log: {
+        Row: {
+          aircraft_id: string
+          assignment_id: string | null
+          flight_date: string
+          flight_duration_hours: number
+          flight_type: string | null
+          id: string
+          instructor_id: string
+          is_cross_country: boolean | null
+          is_instrument: boolean | null
+          is_night_flight: boolean | null
+          landings: number | null
+          logged_at: string | null
+          logged_by: string | null
+          org_id: string
+          remarks: string | null
+          student_id: string
+          takeoffs: number | null
+        }
+        Insert: {
+          aircraft_id: string
+          assignment_id?: string | null
+          flight_date: string
+          flight_duration_hours: number
+          flight_type?: string | null
+          id?: string
+          instructor_id: string
+          is_cross_country?: boolean | null
+          is_instrument?: boolean | null
+          is_night_flight?: boolean | null
+          landings?: number | null
+          logged_at?: string | null
+          logged_by?: string | null
+          org_id: string
+          remarks?: string | null
+          student_id: string
+          takeoffs?: number | null
+        }
+        Update: {
+          aircraft_id?: string
+          assignment_id?: string | null
+          flight_date?: string
+          flight_duration_hours?: number
+          flight_type?: string | null
+          id?: string
+          instructor_id?: string
+          is_cross_country?: boolean | null
+          is_instrument?: boolean | null
+          is_night_flight?: boolean | null
+          landings?: number | null
+          logged_at?: string | null
+          logged_by?: string | null
+          org_id?: string
+          remarks?: string | null
+          student_id?: string
+          takeoffs?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_hours_log_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "roster_assignment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_hours_log_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flight_schools: {
         Row: {
           admin_user_id: string | null
@@ -2204,6 +2279,200 @@ export type Database = {
           },
           {
             foreignKeyName: "profiles_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_history: {
+        Row: {
+          date_range_end: string | null
+          date_range_start: string | null
+          error_message: string | null
+          file_format: string | null
+          file_size_kb: number | null
+          file_url: string | null
+          filters_applied: Json | null
+          generated_at: string | null
+          generated_by: string | null
+          id: string
+          org_id: string
+          report_name: string
+          report_type: string
+          row_count: number | null
+          status: string | null
+          template_id: string | null
+        }
+        Insert: {
+          date_range_end?: string | null
+          date_range_start?: string | null
+          error_message?: string | null
+          file_format?: string | null
+          file_size_kb?: number | null
+          file_url?: string | null
+          filters_applied?: Json | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          org_id: string
+          report_name: string
+          report_type: string
+          row_count?: number | null
+          status?: string | null
+          template_id?: string | null
+        }
+        Update: {
+          date_range_end?: string | null
+          date_range_start?: string | null
+          error_message?: string | null
+          file_format?: string | null
+          file_size_kb?: number | null
+          file_url?: string | null
+          filters_applied?: Json | null
+          generated_at?: string | null
+          generated_by?: string | null
+          id?: string
+          org_id?: string
+          report_name?: string
+          report_type?: string
+          row_count?: number | null
+          status?: string | null
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_history_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_history_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_schedules: {
+        Row: {
+          created_at: string | null
+          day_of_month: number | null
+          day_of_week: number | null
+          frequency: string
+          id: string
+          is_active: boolean | null
+          last_run_at: string | null
+          next_run_at: string | null
+          org_id: string
+          recipients: Json | null
+          schedule_name: string
+          template_id: string | null
+          time_of_day: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_month?: number | null
+          day_of_week?: number | null
+          frequency: string
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          org_id: string
+          recipients?: Json | null
+          schedule_name: string
+          template_id?: string | null
+          time_of_day?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          day_of_month?: number | null
+          day_of_week?: number | null
+          frequency?: string
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          org_id?: string
+          recipients?: Json | null
+          schedule_name?: string
+          template_id?: string | null
+          time_of_day?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_schedules_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_schedules_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          format: string | null
+          id: string
+          is_active: boolean | null
+          is_ai_enabled: boolean | null
+          name: string
+          org_id: string
+          regulatory_authority: string | null
+          report_type: string
+          template_config: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_ai_enabled?: boolean | null
+          name: string
+          org_id: string
+          regulatory_authority?: string | null
+          report_type: string
+          template_config?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_ai_enabled?: boolean | null
+          name?: string
+          org_id?: string
+          regulatory_authority?: string | null
+          report_type?: string
+          template_config?: Json
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_templates_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
