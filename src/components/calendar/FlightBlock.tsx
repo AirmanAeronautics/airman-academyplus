@@ -1,7 +1,10 @@
-import { Clock, User, Plane, AlertTriangle } from "lucide-react"
+import { Clock, User, Plane, AlertTriangle, Video, ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { FlightSession } from "@/data/schedule"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { MeetingScheduler } from "./MeetingScheduler"
 
 interface FlightBlockProps {
   flight: FlightSession
@@ -9,7 +12,37 @@ interface FlightBlockProps {
   compact?: boolean
 }
 
+// Extend FlightSession type to include meeting fields
+type FlightWithMeeting = FlightSession & {
+  meeting_url?: string;
+  meeting_platform?: string;
+}
+
 export function FlightBlock({ flight, onUpdate, compact = false }: FlightBlockProps) {
+  const [schedulerOpen, setSchedulerOpen] = useState(false);
+  const flightWithMeeting = flight as FlightWithMeeting;
+
+  const handleMeetingCreated = (meetingUrl: string, platform: string) => {
+    const updatedFlight = {
+      ...flight,
+      meeting_url: meetingUrl,
+      meeting_platform: platform
+    } as FlightWithMeeting;
+    onUpdate(updatedFlight);
+  };
+
+  const handleJoinMeeting = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (flightWithMeeting.meeting_url) {
+      window.open(flightWithMeeting.meeting_url, '_blank');
+    }
+  };
+
+  const handleScheduleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSchedulerOpen(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
@@ -124,7 +157,45 @@ export function FlightBlock({ flight, onUpdate, compact = false }: FlightBlockPr
             {flight.notes}
           </div>
         )}
+
+        {/* Meeting Section */}
+        <div className="pt-2 border-t mt-2 space-y-2">
+          {flightWithMeeting.meeting_url ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Video className="h-3 w-3" />
+                <span className="capitalize">{flightWithMeeting.meeting_platform || 'Video'} Meeting Scheduled</span>
+              </div>
+              <Button 
+                size="sm" 
+                variant="default"
+                onClick={handleJoinMeeting}
+                className="w-full"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Join Meeting
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={handleScheduleClick}
+              className="w-full"
+            >
+              <Video className="h-4 w-4 mr-2" />
+              Schedule Meeting
+            </Button>
+          )}
+        </div>
       </div>
+
+      <MeetingScheduler
+        open={schedulerOpen}
+        onOpenChange={setSchedulerOpen}
+        flight={flight}
+        onMeetingCreated={handleMeetingCreated}
+      />
     </div>
   )
 }
