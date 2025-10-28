@@ -33,8 +33,10 @@ import {
   Palette,
   Sun,
   Moon,
-  Monitor
+  Monitor,
+  Plug
 } from 'lucide-react';
+import { IntegrationsHub } from '@/components/integrations/IntegrationsHub';
 
 export default function AdminSettings() {
   const { profile } = useAuth();
@@ -296,7 +298,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-11">
+        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
           <TabsTrigger value="organization" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
             <span className="hidden sm:inline">Org</span>
@@ -320,6 +322,10 @@ export default function AdminSettings() {
           <TabsTrigger value="communication" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
             <span className="hidden sm:inline">Comms</span>
+          </TabsTrigger>
+          <TabsTrigger value="integrations" className="flex items-center gap-2">
+            <Plug className="h-4 w-4" />
+            <span className="hidden sm:inline">Integrations</span>
           </TabsTrigger>
           <TabsTrigger value="integration" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
@@ -926,6 +932,24 @@ export default function AdminSettings() {
                   <li>• Theme changes apply instantly across all pages</li>
                 </ul>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Integrations Hub */}
+        <TabsContent value="integrations" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plug className="h-5 w-5" />
+                Integrations Hub
+              </CardTitle>
+              <CardDescription>
+                Connect video conferencing, ERP systems, and cloud storage to streamline your operations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <IntegrationsHub />
             </CardContent>
           </Card>
         </TabsContent>
