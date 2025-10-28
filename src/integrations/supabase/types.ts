@@ -3156,8 +3156,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_primary_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
       get_user_org_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
+      get_user_roles: {
+        Args: { _user_id: string }
+        Returns: {
+          assigned_at: string
+          org_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_org_admin: { Args: { org_uuid?: string }; Returns: boolean }
     }
     Enums: {
