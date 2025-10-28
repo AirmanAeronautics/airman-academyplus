@@ -196,7 +196,7 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-lg">AIRMAN</span>
+              <span className="text-white text-3xl font-bold">AIRMAN</span>
               <span className="text-white/80 text-xs font-medium">Academy</span>
             </div>
           )}
