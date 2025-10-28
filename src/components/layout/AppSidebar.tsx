@@ -191,7 +191,7 @@ export function AppSidebar({ currentUser }: AppSidebarProps) {
     <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarHeader className="border-b border-border bg-gradient-to-r from-primary to-primary/70">
         <div className="flex items-center gap-3 px-4 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white overflow-hidden">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(202,77%,48%)] overflow-hidden">
             <img src={airmanLogo} alt="Airman Academy" className="h-full w-full object-contain" />
           </div>
           {!collapsed && (
