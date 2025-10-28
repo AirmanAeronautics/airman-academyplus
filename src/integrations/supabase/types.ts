@@ -3077,6 +3077,44 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          id: string
+          is_active: boolean
+          org_id: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          is_active?: boolean
+          org_id?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          is_active?: boolean
+          org_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weather_cache: {
         Row: {
           airport_code: string
@@ -3123,7 +3161,18 @@ export type Database = {
       is_org_admin: { Args: { org_uuid?: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "student"
+        | "instructor"
+        | "admin"
+        | "super_admin"
+        | "ops_manager"
+        | "maintenance_officer"
+        | "compliance_officer"
+        | "accounts_officer"
+        | "marketing_crm"
+        | "support"
+        | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3250,6 +3299,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "student",
+        "instructor",
+        "admin",
+        "super_admin",
+        "ops_manager",
+        "maintenance_officer",
+        "compliance_officer",
+        "accounts_officer",
+        "marketing_crm",
+        "support",
+        "pending",
+      ],
+    },
   },
 } as const
