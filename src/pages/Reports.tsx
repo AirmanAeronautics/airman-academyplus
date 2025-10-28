@@ -144,8 +144,15 @@ export default function Reports() {
 
         <Separator />
 
-        {/* Regulatory Exports */}
-        <RegulatoryExportPanel />
+        {/* Training Reports */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Training Reports</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1">
+              <RegulatoryExportPanel />
+            </div>
+          </div>
+        </div>
 
         <Separator />
 
