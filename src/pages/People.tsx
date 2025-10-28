@@ -454,32 +454,53 @@ export default function People() {
 
           {permissions.canViewStudentProgress && (
             <TabsContent value="reports" className="space-y-6">
-              {/* Regulatory Export */}
-              <RegulatoryExportPanel />
-              
               {/* Training Reports */}
               <Card className="aviation-card">
                 <CardHeader>
-                  <CardTitle>Training Reports</CardTitle>
-                  <CardDescription>Generate and export training records and progress reports</CardDescription>
+                  <CardTitle>Training Reports & Analytics</CardTitle>
+                  <CardDescription>Generate and export comprehensive training records, compliance reports, and regulatory documentation</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
                       <GraduationCap className="h-5 w-5" />
-                      <span className="text-sm">Student Progress</span>
+                      <span className="text-sm font-medium">Student Progress</span>
+                      <span className="text-xs text-muted-foreground">Training milestones</span>
                     </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
                       <Clock className="h-5 w-5" />
-                      <span className="text-sm">Flight Hours</span>
+                      <span className="text-sm font-medium">Flight Hours</span>
+                      <span className="text-xs text-muted-foreground">Time tracking</span>
                     </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
                       <UserCheck className="h-5 w-5" />
-                      <span className="text-sm">Instructor Report</span>
+                      <span className="text-sm font-medium">Instructor Report</span>
+                      <span className="text-xs text-muted-foreground">Teaching records</span>
                     </Button>
-                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
                       <BarChart3 className="h-5 w-5" />
-                      <span className="text-sm">Course Completion</span>
+                      <span className="text-sm font-medium">Course Completion</span>
+                      <span className="text-xs text-muted-foreground">Graduation stats</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
+                      <Download className="h-5 w-5" />
+                      <span className="text-sm font-medium">Regulatory Export</span>
+                      <span className="text-xs text-muted-foreground">Authority reports</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
+                      <FileText className="h-5 w-5" />
+                      <span className="text-sm font-medium">Checkride Readiness</span>
+                      <span className="text-xs text-muted-foreground">Exam preparation</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
+                      <Calendar className="h-5 w-5" />
+                      <span className="text-sm font-medium">Attendance Report</span>
+                      <span className="text-xs text-muted-foreground">Session tracking</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2 hover:border-primary hover:bg-accent">
+                      <MessageSquare className="h-5 w-5" />
+                      <span className="text-sm font-medium">Safety Records</span>
+                      <span className="text-xs text-muted-foreground">Incidents & events</span>
                     </Button>
                   </div>
                 </CardContent>
