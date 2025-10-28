@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDemo } from '@/contexts/DemoContext';
 import { useTheme } from 'next-themes';
 import { 
@@ -200,27 +201,53 @@ export default function AdminSettings() {
   };
 
   const approvePendingRequest = async (requestId: string, email: string) => {
+    const request = pendingRequests.find(r => r.id === requestId);
+    const selectedRole = request?.selectedRole || 'student';
+
     if (isDemoMode) {
       setPendingRequests(prev => prev.filter(req => req.id !== requestId));
       toast({
         title: "Demo: Request Approved",
-        description: `${email} has been approved in demo mode.`,
+        description: `${email} has been approved as ${selectedRole} in demo mode.`,
       });
       return;
     }
 
     try {
-      const { error } = await supabase
+      // Update request status
+      const { error: requestError } = await supabase
         .from('org_pending_requests')
         .update({ status: 'approved', processed_at: new Date().toISOString() })
         .eq('id', requestId);
 
-      if (error) throw error;
+      if (requestError) throw requestError;
+
+      // Update user profile with selected role
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          role: selectedRole,
+          approval_status: 'approved' 
+        })
+        .eq('id', request?.user_id);
+
+      if (profileError) throw profileError;
+
+      // Send approval notification
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: request?.user_id,
+          org_id: profile?.org_id,
+          title: 'Access Approved',
+          message: `Your request has been approved. You've been assigned the ${selectedRole} role.`,
+          type: 'success'
+        });
 
       setPendingRequests(prev => prev.filter(req => req.id !== requestId));
       toast({
         title: "Request Approved",
-        description: `${email} has been approved and can now access the platform.`,
+        description: `${email} has been approved as ${selectedRole}.`,
       });
     } catch (error: any) {
       toast({
@@ -414,12 +441,12 @@ export default function AdminSettings() {
               ) : (
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Requested</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
+                  <TableRow>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Requested</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[280px]">Role & Actions</TableHead>
+                  </TableRow>
                   </TableHeader>
                   <TableBody>
                     {pendingRequests.map((request) => (
@@ -430,12 +457,38 @@ export default function AdminSettings() {
                           <Badge variant="outline">{request.status}</Badge>
                         </TableCell>
                         <TableCell>
-                          <Button
-                            size="sm"
-                            onClick={() => approvePendingRequest(request.id, request.email)}
-                          >
-                            Approve
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Select
+                              onValueChange={(role) => {
+                                // Store selected role for this request
+                                const updatedRequests = pendingRequests.map(r => 
+                                  r.id === request.id ? { ...r, selectedRole: role } : r
+                                );
+                                setPendingRequests(updatedRequests);
+                              }}
+                            >
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select role" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="student">Student</SelectItem>
+                                <SelectItem value="instructor">Instructor</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="accounts_officer">Finance Officer</SelectItem>
+                                <SelectItem value="marketing_manager">Marketing Manager</SelectItem>
+                                <SelectItem value="fleet_manager">Fleet Manager</SelectItem>
+                                <SelectItem value="compliance_officer">Compliance Officer</SelectItem>
+                                <SelectItem value="support_staff">Support Officer</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              size="sm"
+                              onClick={() => approvePendingRequest(request.id, request.email)}
+                              disabled={!request.selectedRole}
+                            >
+                              Approve
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -703,43 +756,6 @@ export default function AdminSettings() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Usage Analytics
-              </CardTitle>
-              <CardDescription>View system usage and performance metrics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">1,247</div>
-                    <p className="text-sm text-muted-foreground">Total Flight Hours</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">89%</div>
-                    <p className="text-sm text-muted-foreground">Aircraft Utilization</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">34</div>
-                    <p className="text-sm text-muted-foreground">Active Users</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="text-2xl font-bold">12</div>
-                    <p className="text-sm text-muted-foreground">Pending Items</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
                 System Event Logs
               </CardTitle>
@@ -772,11 +788,6 @@ export default function AdminSettings() {
           </Card>
         </TabsContent>
 
-        {/* Integrations Hub */}
-        <TabsContent value="integrations" className="space-y-6">
-          <IntegrationsHub />
-        </TabsContent>
-
         {/* Appearance Settings */}
         <TabsContent value="appearance" className="space-y-6">
           <Card>
@@ -788,8 +799,9 @@ export default function AdminSettings() {
               <CardDescription>Customize the appearance of your application</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Color Mode Selection */}
               <div className="space-y-4">
-                <Label className="text-base">Color Theme</Label>
+                <Label className="text-base">Color Mode</Label>
                 <p className="text-sm text-muted-foreground">
                   Choose how the interface should appear. System will automatically match your device's theme.
                 </p>
@@ -895,6 +907,95 @@ export default function AdminSettings() {
                   <li>• Dark mode is optimized for reduced eye strain during night operations</li>
                   <li>• Theme changes apply instantly across all pages</li>
                 </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Regional Preferences */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Regional Preferences
+              </CardTitle>
+              <CardDescription>Configure timezone, currency, and regional settings</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="timezone">Timezone</Label>
+                  <Select defaultValue="utc">
+                    <SelectTrigger id="timezone">
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="utc">UTC (Coordinated Universal Time)</SelectItem>
+                      <SelectItem value="est">EST (Eastern Standard Time)</SelectItem>
+                      <SelectItem value="pst">PST (Pacific Standard Time)</SelectItem>
+                      <SelectItem value="gmt">GMT (Greenwich Mean Time)</SelectItem>
+                      <SelectItem value="cet">CET (Central European Time)</SelectItem>
+                      <SelectItem value="ist">IST (Indian Standard Time)</SelectItem>
+                      <SelectItem value="aest">AEST (Australian Eastern Time)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    All times will be displayed in your selected timezone
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select defaultValue="usd">
+                    <SelectTrigger id="currency">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="usd">USD ($) - US Dollar</SelectItem>
+                      <SelectItem value="eur">EUR (€) - Euro</SelectItem>
+                      <SelectItem value="gbp">GBP (£) - British Pound</SelectItem>
+                      <SelectItem value="inr">INR (₹) - Indian Rupee</SelectItem>
+                      <SelectItem value="aud">AUD ($) - Australian Dollar</SelectItem>
+                      <SelectItem value="cad">CAD ($) - Canadian Dollar</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Financial amounts will be displayed in your selected currency
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dateformat">Date Format</Label>
+                  <Select defaultValue="mdy">
+                    <SelectTrigger id="dateformat">
+                      <SelectValue placeholder="Select date format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mdy">MM/DD/YYYY (US Format)</SelectItem>
+                      <SelectItem value="dmy">DD/MM/YYYY (European Format)</SelectItem>
+                      <SelectItem value="ymd">YYYY-MM-DD (ISO Format)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="units">Unit System</Label>
+                  <Select defaultValue="imperial">
+                    <SelectTrigger id="units">
+                      <SelectValue placeholder="Select unit system" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="imperial">Imperial (ft, mph, lbs)</SelectItem>
+                      <SelectItem value="metric">Metric (m, km/h, kg)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Aviation measurements and units display preference
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <Button>Save Preferences</Button>
               </div>
             </CardContent>
           </Card>

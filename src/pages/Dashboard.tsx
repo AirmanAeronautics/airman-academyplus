@@ -1,4 +1,4 @@
-import { Users, Calendar, Plane, GraduationCap, AlertTriangle, Bot } from "lucide-react"
+import { Users, Calendar, Plane, GraduationCap, AlertTriangle, Bot, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { KPICard } from "@/components/dashboard/KPICard"
@@ -321,6 +321,46 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
           )}
         </div>
       </div>
+
+      {/* Usage Analytics - Admin Only */}
+      {(effectiveRole === "admin" || effectiveRole === "ops_manager") && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Usage Analytics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-2xl font-bold">1,247</div>
+                  <p className="text-sm text-muted-foreground">Total Flight Hours</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-2xl font-bold">89%</div>
+                  <p className="text-sm text-muted-foreground">Aircraft Utilization</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-2xl font-bold">34</div>
+                  <p className="text-sm text-muted-foreground">Active Users</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-2xl font-bold">12</div>
+                  <p className="text-sm text-muted-foreground">Pending Items</p>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Bottom Section - role-specific widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
