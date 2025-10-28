@@ -1431,6 +1431,54 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_events: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          integration_id: string | null
+          org_id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          integration_id?: string | null
+          org_id: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          integration_id?: string | null
+          org_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_events_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "org_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_activities: {
         Row: {
           activity_date: string
@@ -1727,6 +1775,66 @@ export type Database = {
           },
         ]
       }
+      meeting_recordings: {
+        Row: {
+          assignment_id: string | null
+          cloud_storage_url: string | null
+          created_at: string
+          duration_minutes: number | null
+          file_size_mb: number | null
+          id: string
+          meeting_id: string
+          meeting_platform: string
+          org_id: string
+          recording_url: string | null
+          transcript: string | null
+          uploaded_at: string | null
+        }
+        Insert: {
+          assignment_id?: string | null
+          cloud_storage_url?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          file_size_mb?: number | null
+          id?: string
+          meeting_id: string
+          meeting_platform: string
+          org_id: string
+          recording_url?: string | null
+          transcript?: string | null
+          uploaded_at?: string | null
+        }
+        Update: {
+          assignment_id?: string | null
+          cloud_storage_url?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          file_size_mb?: number | null
+          id?: string
+          meeting_id?: string
+          meeting_platform?: string
+          org_id?: string
+          recording_url?: string | null
+          transcript?: string | null
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_recordings_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "roster_assignment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_recordings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_threads: {
         Row: {
           created_at: string
@@ -1848,6 +1956,59 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_integrations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          credentials: Json | null
+          id: string
+          integration_name: string
+          integration_type: string
+          last_sync_at: string | null
+          org_id: string
+          settings: Json | null
+          status: string | null
+          updated_at: string
+          webhook_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          credentials?: Json | null
+          id?: string
+          integration_name: string
+          integration_type: string
+          last_sync_at?: string | null
+          org_id: string
+          settings?: Json | null
+          status?: string | null
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          credentials?: Json | null
+          id?: string
+          integration_name?: string
+          integration_type?: string
+          last_sync_at?: string | null
+          org_id?: string
+          settings?: Json | null
+          status?: string | null
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_integrations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -2110,8 +2271,12 @@ export type Database = {
           id: string
           instructor_id: string | null
           lesson_id: string | null
+          meeting_id: string | null
+          meeting_platform: string | null
+          meeting_url: string | null
           org_id: string
           plan_id: string
+          recording_url: string | null
           score_breakdown: Json | null
           start_at: string
           status: string
@@ -2128,8 +2293,12 @@ export type Database = {
           id?: string
           instructor_id?: string | null
           lesson_id?: string | null
+          meeting_id?: string | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
           org_id: string
           plan_id: string
+          recording_url?: string | null
           score_breakdown?: Json | null
           start_at: string
           status?: string
@@ -2146,8 +2315,12 @@ export type Database = {
           id?: string
           instructor_id?: string | null
           lesson_id?: string | null
+          meeting_id?: string | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
           org_id?: string
           plan_id?: string
+          recording_url?: string | null
           score_breakdown?: Json | null
           start_at?: string
           status?: string
@@ -2676,18 +2849,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_org_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      is_org_admin: {
-        Args: { org_uuid?: string }
-        Returns: boolean
-      }
+      get_user_org_id: { Args: never; Returns: string }
+      get_user_role: { Args: never; Returns: string }
+      is_org_admin: { Args: { org_uuid?: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

@@ -106,13 +106,6 @@ export function IntegrationsHub() {
 
   return (
     <div className="space-y-8">
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Database tables for integrations need to be created. Please approve the pending migration to enable full functionality.
-        </AlertDescription>
-      </Alert>
-
       {/* Video Conferencing */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">

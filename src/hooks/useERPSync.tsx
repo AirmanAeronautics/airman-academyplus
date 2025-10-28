@@ -119,17 +119,16 @@ export const useERPSync = (erpType: 'quickbooks' | 'xero' | 'sage') => {
 
   const getLastSync = async (orgId: string) => {
     try {
-      // TODO: Uncomment when org_integrations table is created
-      // const { data, error } = await supabase
-      //   .from('org_integrations')
-      //   .select('last_sync_at')
-      //   .eq('org_id', orgId)
-      //   .eq('integration_type', erpType)
-      //   .single();
-      // if (error) throw error;
-      // return data?.last_sync_at ? new Date(data.last_sync_at) : null;
-      
-      return null;
+      const { data, error } = await supabase
+        .from('org_integrations')
+        .select('last_sync_at')
+        .eq('org_id', orgId)
+        .eq('integration_type', erpType)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      return data?.last_sync_at ? new Date(data.last_sync_at) : null;
     } catch (error) {
       return null;
     }

@@ -34,18 +34,18 @@ export const useVideoMeeting = () => {
       const mockMeetingUrl = `https://${params.platform}.example.com/j/${Math.random().toString(36).substr(2, 9)}`;
       
       // If assignmentId provided, update the roster assignment
-      // TODO: Uncomment when meeting_url columns are added to roster_assignment
-      // if (params.assignmentId) {
-      //   const { error } = await supabase
-      //     .from('roster_assignment')
-      //     .update({
-      //       meeting_url: mockMeetingUrl,
-      //       meeting_platform: params.platform,
-      //       meeting_id: Math.random().toString(36).substr(2, 9)
-      //     })
-      //     .eq('id', params.assignmentId);
-      //   if (error) throw error;
-      // }
+      if (params.assignmentId) {
+        const { error } = await supabase
+          .from('roster_assignment')
+          .update({
+            meeting_url: mockMeetingUrl,
+            meeting_platform: params.platform,
+            meeting_id: Math.random().toString(36).substr(2, 9)
+          })
+          .eq('id', params.assignmentId);
+
+        if (error) throw error;
+      }
 
       toast({
         title: "Meeting created",
@@ -108,16 +108,15 @@ export const useVideoMeeting = () => {
 
   const getMeetingRecordings = async (meetingId: string) => {
     try {
-      // TODO: Uncomment when meeting_recordings table is created
-      // const { data, error } = await supabase
-      //   .from('meeting_recordings')
-      //   .select('*')
-      //   .eq('meeting_id', meetingId)
-      //   .order('created_at', { ascending: false });
-      // if (error) throw error;
-      // return data;
-      
-      return [];
+      const { data, error } = await supabase
+        .from('meeting_recordings')
+        .select('*')
+        .eq('meeting_id', meetingId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return data;
     } catch (error: any) {
       toast({
         title: "Error loading recordings",

@@ -24,17 +24,14 @@ export const useIntegrations = (orgId?: string) => {
     
     try {
       setLoading(true);
-      // TODO: Uncomment when org_integrations table is created
-      // const { data, error } = await supabase
-      //   .from('org_integrations')
-      //   .select('*')
-      //   .eq('org_id', orgId)
-      //   .order('created_at', { ascending: false });
-      // if (error) throw error;
-      // setIntegrations(data || []);
-      
-      // For now, return empty array
-      setIntegrations([]);
+      const { data, error } = await supabase
+        .from('org_integrations')
+        .select('*')
+        .eq('org_id', orgId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setIntegrations((data || []) as Integration[]);
     } catch (error: any) {
       toast({
         title: "Error loading integrations",
@@ -60,26 +57,27 @@ export const useIntegrations = (orgId?: string) => {
       // });
       // window.location.href = data.authUrl;
 
-      // For demo purposes, simulate connection
-      toast({
-        title: "Integration connected",
-        description: `${type} has been successfully connected. (Database tables pending)`,
-      });
-      
-      // TODO: Uncomment when org_integrations table is created
-      // if (orgId) {
-      //   const { error } = await supabase
-      //     .from('org_integrations')
-      //     .insert({
-      //       org_id: orgId,
-      //       integration_type: type,
-      //       integration_name: type.charAt(0).toUpperCase() + type.slice(1),
-      //       status: 'active',
-      //       settings: {}
-      //     });
-      //   if (error) throw error;
-      //   await fetchIntegrations();
-      // }
+      // Create integration record
+      if (orgId) {
+        const { error } = await supabase
+          .from('org_integrations')
+          .insert({
+            org_id: orgId,
+            integration_type: type,
+            integration_name: type.charAt(0).toUpperCase() + type.slice(1),
+            status: 'active',
+            settings: {}
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "Integration connected",
+          description: `${type} has been successfully connected.`,
+        });
+
+        await fetchIntegrations();
+      }
     } catch (error: any) {
       toast({
         title: "Connection failed",
@@ -91,12 +89,12 @@ export const useIntegrations = (orgId?: string) => {
 
   const disconnectIntegration = async (integrationId: string) => {
     try {
-      // TODO: Uncomment when org_integrations table is created
-      // const { error } = await supabase
-      //   .from('org_integrations')
-      //   .update({ status: 'inactive' })
-      //   .eq('id', integrationId);
-      // if (error) throw error;
+      const { error } = await supabase
+        .from('org_integrations')
+        .update({ status: 'inactive' })
+        .eq('id', integrationId);
+
+      if (error) throw error;
 
       toast({
         title: "Integration disconnected",
@@ -115,12 +113,12 @@ export const useIntegrations = (orgId?: string) => {
 
   const updateIntegrationSettings = async (integrationId: string, settings: any) => {
     try {
-      // TODO: Uncomment when org_integrations table is created
-      // const { error } = await supabase
-      //   .from('org_integrations')
-      //   .update({ settings, updated_at: new Date().toISOString() })
-      //   .eq('id', integrationId);
-      // if (error) throw error;
+      const { error } = await supabase
+        .from('org_integrations')
+        .update({ settings, updated_at: new Date().toISOString() })
+        .eq('id', integrationId);
+
+      if (error) throw error;
 
       toast({
         title: "Settings updated",
