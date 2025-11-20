@@ -15,7 +15,7 @@ export function handleApiError(error: unknown): ApiError {
       const data = response.data as any;
       
       return {
-        message: data.message || (error as Error).message || 'An error occurred',
+        message: data.message || (error as any).message || 'An error occurred',
         errorCode: data.errorCode,
         status: response.status,
         fieldErrors: data.fieldErrors || data.errors,
@@ -23,7 +23,7 @@ export function handleApiError(error: unknown): ApiError {
     }
     
     return {
-      message: (error as Error).message || 'An error occurred',
+      message: (error as any).message || 'An error occurred',
       status: response?.status,
     };
   }

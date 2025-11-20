@@ -225,7 +225,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
         </h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {effectiveRole === "ops_manager" && (
+          {effectiveRole === "OPS_MANAGER" && (
             <>
               <AlertCard
                 type="warning"
@@ -242,7 +242,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "maintenance_officer" && (
+          {effectiveRole === "MAINTENANCE_OFFICER" && (
             <>
               <AlertCard
                 type="warning"
@@ -259,7 +259,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "compliance_officer" && (
+          {effectiveRole === "COMPLIANCE_OFFICER" && (
             <>
               <AlertCard
                 type="warning"
@@ -276,7 +276,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "accounts_officer" && (
+          {effectiveRole === "ACCOUNTS_OFFICER" && (
             <>
               <AlertCard
                 type="warning"
@@ -293,7 +293,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "marketing_crm" && (
+          {effectiveRole === "MARKETING_CRM" && (
             <>
               <AlertCard
                 type="success"
@@ -310,7 +310,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "support" && (
+          {effectiveRole === "SUPPORT_STAFF" && (
             <>
               <AlertCard
                 type="warning"
@@ -327,7 +327,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
             </>
           )}
           
-          {effectiveRole === "admin" && (
+          {effectiveRole === "ADMIN" && (
             <>
               <AlertCard
                 type="success"
@@ -347,7 +347,7 @@ export default function Dashboard({ currentUserRole }: DashboardProps) {
       </div>
 
       {/* Usage Analytics - Admin Only */}
-      {(effectiveRole === "admin" || effectiveRole === "ops_manager") && (
+      {(effectiveRole === "ADMIN" || effectiveRole === "OPS_MANAGER") && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

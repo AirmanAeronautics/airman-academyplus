@@ -13,8 +13,8 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { user, logout, isDemoMode } = useAuthBackend();
-  const { exitDemo, resetDemo } = useDemo();
+  const { user, logout } = useAuthBackend();
+  const { exitDemo, resetDemo, isDemoMode } = useDemo();
 
   return (
     <SidebarProvider defaultOpen={true}>
