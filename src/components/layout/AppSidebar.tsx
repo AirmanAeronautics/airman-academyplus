@@ -12,6 +12,7 @@ import {
   Settings,
   Cloud,
   Radio,
+  PlayCircle,
 } from "lucide-react"
 
 import {
@@ -131,6 +132,12 @@ const navigationItems: NavItem[] = [
     title: "Admin Settings",
     url: "/admin/settings",
     icon: Settings,
+    navKey: "dashboard", // Only SUPER_ADMIN and ADMIN can access
+  },
+  {
+    title: "Live Demo Setup",
+    url: "/demo",
+    icon: PlayCircle,
     navKey: "dashboard", // Only SUPER_ADMIN and ADMIN can access
   },
 ]
