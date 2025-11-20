@@ -36,6 +36,7 @@ import Reports from "./pages/Reports";
 import DemoFlowPage from "./pages/DemoFlowPage";
 import NotFound from "./pages/NotFound";
 import AirmanRosterDemo from "./pages/AirmanRosterDemo";
+import RosterAgentPage from "./pages/RosterAgentPage";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
                         <Route path="/messages" element={<Messages />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/demo" element={<DemoFlowPage />} />
+                        <Route path="/roster-ai" element={<RosterAgentPage />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>

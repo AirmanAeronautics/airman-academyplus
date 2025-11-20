@@ -13,6 +13,7 @@ import {
   Cloud,
   Radio,
   PlayCircle,
+  Sparkles,
 } from "lucide-react"
 
 import {
@@ -139,6 +140,12 @@ const navigationItems: NavItem[] = [
     url: "/demo",
     icon: PlayCircle,
     navKey: "dashboard", // Only SUPER_ADMIN and ADMIN can access
+  },
+  {
+    title: "AI Roster Agent",
+    url: "/roster-ai",
+    icon: Sparkles,
+    navKey: "ops", // Available to SUPER_ADMIN, ADMIN, and OPS_MANAGER
   },
 ]
 
