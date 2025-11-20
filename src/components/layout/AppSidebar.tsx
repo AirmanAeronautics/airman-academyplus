@@ -156,12 +156,18 @@ export function AppSidebar() {
   const location = useLocation()
   const currentPath = location.pathname
   const collapsed = state === "collapsed"
-  const { user } = useAuthBackend()
+  const { user, loading } = useAuthBackend()
+
+  // Debug: Log user state
+  console.log('AppSidebar - User:', user, 'Loading:', loading)
 
   // Get allowed navigation keys for current user role
   const allowedNavKeys = user?.role ? NAV_BY_ROLE[user.role] || [] : []
   const isSuperAdmin = user?.role === 'SUPER_ADMIN'
   const isAdmin = user?.role === 'ADMIN'
+
+  // Debug: Log navigation access
+  console.log('AppSidebar - User role:', user?.role, 'Allowed nav keys:', allowedNavKeys)
 
   // Filter navigation items based on role
   const visibleItems = navigationItems.filter((item) => {
