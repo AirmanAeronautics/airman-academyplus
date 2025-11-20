@@ -372,6 +372,6 @@ export const eventLogs: EventLog[] = [
     summary: "Academy+ Console Initialized",
     details: { version: "1.0.0", mode: "demo" },
     user_id: "system",
-    role: "admin"
+    role: "ADMIN"
   }
 ];

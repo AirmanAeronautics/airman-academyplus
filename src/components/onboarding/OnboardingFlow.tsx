@@ -88,7 +88,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           .insert({
             user_id: user.id,
             flight_school_id: data.flight_school_id,
-            org_id: user.user_metadata?.org_id || ''
+            org_id: (user as any).user_metadata?.org_id || ''
           });
       }
 

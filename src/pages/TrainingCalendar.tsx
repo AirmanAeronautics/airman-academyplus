@@ -45,9 +45,9 @@ export default function TrainingCalendar() {
   const instituteId = (currentUser as any)?.instituteId || (currentUser as any)?.tenantId || 'default';
   
   // Determine if user is admin/ops (can see master roster) or instructor/student (see own roster)
-  const isAdminOrOps = currentUser?.role === 'ADMIN' || currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'OPS_MANAGER';
-  const isInstructor = currentUser?.role === 'INSTRUCTOR';
-  const isStudent = currentUser?.role === 'STUDENT';
+  const isAdminOrOps = (currentUser as any)?.role === 'ADMIN' || (currentUser as any)?.role === 'SUPER_ADMIN' || (currentUser as any)?.role === 'OPS_MANAGER';
+  const isInstructor = (currentUser as any)?.role === 'INSTRUCTOR';
+  const isStudent = (currentUser as any)?.role === 'STUDENT';
 
   // Calculate date range based on selected date and view (default to week view)
   const dateRange = useMemo(() => {
@@ -153,7 +153,7 @@ export default function TrainingCalendar() {
     eventBus.push('schedule_bulk_update', {
       changesApplied: changes.length,
       affectedFlights: changes.map(c => c.student)
-    }, currentUser?.id, currentUser?.role)
+    }, currentUser?.id, (currentUser as any)?.role)
   };
 
   // Refresh roster data
