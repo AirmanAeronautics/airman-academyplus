@@ -1,5 +1,5 @@
 // API client for auth and onboarding (using fetch to match existing codebase)
-import { tokenStorage } from './auth/tokenStorage';
+import { tokenStorage } from '../auth/tokenStorage';
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
