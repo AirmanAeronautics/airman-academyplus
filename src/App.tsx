@@ -34,6 +34,7 @@ import Support from "./pages/Support";
 import Messages from "./pages/Messages";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
+import AirmanRosterDemo from "./pages/AirmanRosterDemo";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                 <Route path="/auth/verify-otp" element={<VerifyOtp />} />
                 <Route path="/onboarding/start" element={<OnboardingStart />} />
                 <Route path="/onboarding/profile" element={<OnboardingProfile />} />
+                <Route path="/roster-demo" element={<AirmanRosterDemo />} />
                 <Route path="/*" element={
                   <ProtectedRoute>
                     <NotificationManager />

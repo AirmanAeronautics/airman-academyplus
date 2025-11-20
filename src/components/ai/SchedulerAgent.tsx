@@ -239,15 +239,15 @@ export function SchedulerAgent({ onApplyChanges, instituteId, startDate, endDate
                 </div>
               )}
               
-              {aiSuggestions.length === 0 && mockChanges.length > 0 && (
+              {aiSuggestions.length === 0 && changes.length > 0 && !isOptimizing && (
                 <div className="text-sm text-muted-foreground">
-                  Found {mockChanges.length} optimization opportunities. Select changes to apply:
+                  Found {changes.length} optimization opportunities. Select changes to apply:
                 </div>
               )}
               
-              {aiSuggestions.length === 0 && mockChanges.length === 0 && !isOptimizing && (
+              {aiSuggestions.length === 0 && changes.length === 0 && !isOptimizing && (
                 <div className="text-sm text-muted-foreground text-center py-4">
-                  Click "Generate AI Suggestions" to get optimization recommendations.
+                  Click "Optimize Schedule" to get optimization recommendations.
                 </div>
               )}
 
