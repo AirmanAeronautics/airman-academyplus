@@ -1,0 +1,25 @@
+export type UserRole =
+  | 'SUPER_ADMIN'
+  | 'ADMIN'
+  | 'OPS_MANAGER'
+  | 'MAINTENANCE_OFFICER'
+  | 'COMPLIANCE_OFFICER'
+  | 'ACCOUNTS_OFFICER'
+  | 'MARKETING_CRM'
+  | 'SUPPORT_STAFF'
+  | 'INSTRUCTOR'
+  | 'STUDENT';
+
+export const USER_ROLES: readonly UserRole[] = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'OPS_MANAGER',
+  'MAINTENANCE_OFFICER',
+  'COMPLIANCE_OFFICER',
+  'ACCOUNTS_OFFICER',
+  'MARKETING_CRM',
+  'SUPPORT_STAFF',
+  'INSTRUCTOR',
+  'STUDENT',
+] as const;
+

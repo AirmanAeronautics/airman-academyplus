@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* AIRMAN Academy+ Design System - Aviation-tech inspired professional interface
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Core Aviation Blue Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 210 11% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 11% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 11% 15%;
+
+    /* Primary: AIRMAN Aviation Blue #168AAD */
+    --primary: 197 75% 37%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 197 75% 45%;
+    --primary-dark: 197 75% 30%;
+
+    /* Professional Greys */
+    --secondary: 210 11% 96%;
+    --secondary-foreground: 210 11% 15%;
+
+    --muted: 210 11% 97%;
+    --muted-foreground: 210 8% 46%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 197 75% 37%;
+
+    /* Status Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Interface Elements */
+    --border: 210 11% 92%;
+    --input: 210 11% 92%;
+    --ring: 197 75% 37%;
+
+    /* Aviation-inspired Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(197 75% 37%), hsl(197 75% 45%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 11% 98%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 20% 99%));
+
+    /* Professional Shadows */
+    --shadow-card: 0 1px 3px 0 hsl(210 11% 15% / 0.1), 0 1px 2px 0 hsl(210 11% 15% / 0.06);
+    --shadow-elevated: 0 4px 6px -1px hsl(210 11% 15% / 0.1), 0 2px 4px -1px hsl(210 11% 15% / 0.06);
+    --shadow-floating: 0 10px 15px -3px hsl(210 11% 15% / 0.1), 0 4px 6px -2px hsl(210 11% 15% / 0.05);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+}
+
+/* Aviation-inspired component utilities */
+@layer components {
+  .aviation-card {
+    @apply bg-white border border-border rounded-xl;
+    box-shadow: var(--shadow-card);
+    background: var(--gradient-card);
+  }
+  
+  .aviation-card-elevated {
+    @apply aviation-card;
+    box-shadow: var(--shadow-elevated);
+  }
+  
+  .aviation-card-floating {
+    @apply aviation-card;
+    box-shadow: var(--shadow-floating);
+  }
+  
+  .status-indicator {
+    @apply w-2 h-2 rounded-full;
+  }
+  
+  .status-active {
+    @apply status-indicator bg-success;
+  }
+  
+  .status-warning {
+    @apply status-indicator bg-warning;
+  }
+  
+  .status-inactive {
+    @apply status-indicator bg-muted-foreground;
+  }
+
+  /* Abstract Fluid Mesh Gradients for Training Categories */
+  .gradient-solo {
+    background: linear-gradient(135deg, #BBDFFB 0%, #E4F2FD 50%, #BBDFFB 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-cross-country {
+    background: linear-gradient(135deg, #3B83F6 0%, #168ADD 50%, #3B83F6 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-night {
+    background: linear-gradient(135deg, #1E3A8A 0%, #042262 50%, #1E3A8A 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-instrument {
+    background: linear-gradient(135deg, #168ADD 0%, #3B83F6 50%, #168ADD 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .gradient-checkride {
+    background: linear-gradient(135deg, #042262 0%, #1E3A8A 50%, #042262 100%);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}

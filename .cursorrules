@@ -1,0 +1,274 @@
+# Skynet+ (.cursorrules)
+# AIRMAN Aeronautics · Skynet+ · Academy Ops Platform
+# This file guides AI assistants (like Cursor) when generating or editing code in this repo.
+
+# =========================================================
+# 0. HIGH-LEVEL PRODUCT & ARCHITECTURE OVERVIEW
+# =========================================================
+
+# Skynet+ is a multi-tenant SaaS platform for Flight Training Organizations (FTOs), universities,
+# and type-rating academies. It is the operational backbone:
+# - From lead onboarding and training programs
+# - To daily operations, rostering, dispatch, compliance, and graduation.
+# Skynet X (airline-grade) will come later. For now this repo focuses on Skynet+.
+
+# Core principles:
+# - Multi-tenant, secure-by-design, audit-ready.
+# - Region-aware and regulator-aware (DGCA-first now; others later via Regulatory Engine).
+# - Roster + Dispatch + Live Environment Data (WX/NOTAM/traffic) are FIRST-CLASS modules.
+# - Human-in-the-loop: AI proposes, Ops/Dispatch approves.
+# - Everything explainable: no "black box" scheduling.
+
+# Target stack:
+# - Monorepo: Turborepo.
+# - Backend: NestJS + TypeScript + Prisma + PostgreSQL.
+# - Frontend: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui + React Query.
+# - Libraries: Separate packages for domain, roster engine, regulatory engine, UI kit, API clients.
+# - Infra: Region-specific deployments per RDD (simulated as single region in MVP).
+
+# =========================================================
+# 1. PROJECT STRUCTURE EXPECTATIONS
+# =========================================================
+
+# Assume/maintain this structure (or converge towards it):
+
+# apps/
+#   skynet-plus-web/      -> Next.js app for FTO ops, instructors, students.
+#   skynet-plus-api/      -> NestJS HTTP API for Skynet+ (deployed per-region).
+#
+# packages/
+#   core-domain/          -> Shared domain types & utilities (no Nest/Next).
+#   shared-types/         -> DTOs, API contracts (TS types, Zod).
+#   ui-kit/               -> Shared UI components (shadcn/ui wrappers, layout).
+#   roster-engine/        -> Pure TS roster solver (no IO).
+#   regulatory-engine/    -> Pure TS regulatory rules & resolution (no IO).
+#   sdk-clients/          -> Typed API clients for web & external integrations.
+#   config/               -> ESLint, TSConfig, Tailwind, env schema, etc.
+#
+# infra/
+#   control-plane/        -> (Future) infra as code for global services.
+#   rdd-*/                -> (Future) region-specific infra definitions.
+#
+# docs/
+#   architecture/         -> Diagrams & ADRs.
+#   regulatory/           -> Regulatory mappings.
+#   api/                  -> OpenAPI/HTTP docs.
+
+# All new code must align with and reinforce this structure.
+
+
+# =========================================================
+# 2. TENANCY, SECURITY & DATA RULES (MANDATORY)
+# =========================================================
+
+# 2.1 Tenancy
+# - Every domain entity that belongs to an FTO MUST have a tenantId.
+# - All queries MUST be tenant-scoped. No cross-tenant reads/writes.
+# - Never infer tenantId from arbitrary input; always from authenticated context (JWT/session).
+# - When generating Prisma models, always include tenantId where relevant.
+
+# 2.2 RLS (Row-Level Security)
+# - Design DB schema to support Postgres RLS.
+# - Include test helpers to assert:
+#   - No data from another tenant can be queried.
+#   - Roster/Dispatch/Environment/Training queries always filter by tenantId.
+
+# 2.3 Auth & Roles
+# - Implement and respect roles:
+#   - ADMIN, OPS, INSTRUCTOR, STUDENT (and future COMPLIANCE, DISPATCH if needed).
+# - Protect all sensitive routes with proper guards.
+# - Never expose another user's schedule or PII across tenants.
+
+# 2.4 Security Practices
+# - Use DTO + class-validator for all external inputs.
+# - No secrets hard-coded. Read from environment/config.
+# - Implement audit logging for critical operations (auth, roster changes, dispatch releases).
+
+
+# =========================================================
+# 3. REGULATORY ENGINE INTEGRATION
+# =========================================================
+
+# Skynet+ must NOT hardcode regulator logic inside random modules.
+
+# Rules:
+# - Regulatory logic (lesson minima, instructor classes, duty rules, retention) lives in:
+#   packages/regulatory-engine
+# - Other modules (lessons, roster, dispatch) call:
+#   - regulatory-engine to resolve effective policies for a tenant.
+# - For MVP:
+#   - Implement DGCA as the first framework.
+#   - Make it easy to add EASA/FAA/etc later via configuration, not schema forks.
+
+# Implementation guidance:
+# - `regulatory-engine` exposes:
+#   - getEffectiveLessonRequirements(tenantId, lesson)
+#   - getDutyPolicy(tenantId)
+# - Use these functions when:
+#   - Validating lesson requirements.
+#   - Checking feasibility in roster-engine.
+#   - Evaluating dispatch "go/no-go" rules (where applicable).
+
+
+# =========================================================
+# 4. ROSTER ENGINE (AI ROSTER FABRIC)
+# =========================================================
+
+# Roster logic must be:
+# - Deterministic, testable, and explainable.
+# - Encapsulated in packages/roster-engine (NO NestJS, NO DB code inside).
+
+# Requirements for roster-engine:
+# - Input:
+#   - Instructors, students, aircraft, lessons, availability, environment snapshot(s), policies.
+# - Output:
+#   - Candidate assignments with:
+#     - feasibilityProof (constraints checked + references),
+#     - scoreBreakdown (weights applied),
+#     - suggested time slots.
+# - Must separate:
+#   - HARD constraints (availability, quals, aircraft capability, minima).
+#   - SOFT constraints (balance load, continuity, gaps).
+# - Never silently ignore constraints; if data missing:
+#   - Mark lower confidence instead of lying.
+
+# In apps/skynet-plus-api:
+# - `modules/roster`:
+#   - Orchestrates DB reads, calls roster-engine, persists RosterPlan & RosterAssignment.
+#   - Exposes APIs:
+#     - Create plan, solve plan, list assignments, update/confirm/cancel assignments.
+#   - All actions must:
+#     - be tenant-scoped,
+#     - be audited,
+#     - be explainable (store feasibilityProof + scoreBreakdown).
+
+
+# =========================================================
+# 5. ENVIRONMENT & DISPATCH MODULES
+# =========================================================
+
+# Environment (WX/NOTAM/Traffic):
+# - Implement as `modules/environment` in skynet-plus-api.
+# - Responsibilities:
+#   - Store METAR/TAF/NOTAM/traffic snapshots per airport (and per tenant/region).
+#   - Provide:
+#     - GET /env/current?airport=XXXX
+#   - Use provider adapters (wrappable in the future).
+# - Roster and Dispatch consume EnvironmentService, never call third-party APIs directly.
+
+# Dispatch:
+# - Implement as `modules/dispatch`.
+# - Responsibilities:
+#   - Ops/Dispatch console around RosterAssignments.
+#   - Check conditions (WX/NOTAM/mx/constraints) before "RELEASE".
+#   - Maintain DispatchRelease records with:
+#     - status: PENDING, READY, RELEASED, HOLD, CANCELLED.
+#     - linked environment snapshots.
+#   - Enforce:
+#     - Only READY can be RELEASED.
+#     - All release actions logged to audit.
+
+# Design rule:
+# - AI suggests; Dispatch approves.
+# - The system must never auto-release flights without a traceable decision.
+
+
+# =========================================================
+# 6. FRONTEND (skynet-plus-web) GUIDELINES
+# =========================================================
+
+# - Use Next.js App Router, TypeScript, Server Components where reasonable.
+# - Use shadcn/ui + Tailwind for a clean FTO ops UX.
+# - Use React Query (or equivalent) for data fetching/caching.
+# - Pages to prioritize:
+#   - /login, /onboard
+#   - /dashboard
+#   - /instructors, /students, /aircraft, /lessons
+#   - /roster  -> calendar/Gantt view, "Generate / Replan" actions
+#   - /dispatch -> today's sorties, WX/NOTAM snapshots, Release/Hold flow
+#   - /me/schedule -> for instructors/students
+
+# UX rules:
+# - Always show WHY for AI/roster decisions (feasibilityProof + scoreBreakdown).
+# - Clear role-based access (students only see their flights; instructors only theirs; ops see all).
+# - Mobile-friendly enough for tablets in ops/dispatch rooms.
+# - No clutter: prioritize operational clarity over fancy visuals.
+
+
+# =========================================================
+# 7. AUTOMATION, EVENTS & INTEGRATIONS
+# =========================================================
+
+# - Use an Outbox pattern for emitting domain events (e.g., roster changes, dispatch releases).
+# - n8n or similar automation tools should:
+#   - Consume well-defined HTTP/webhook events.
+#   - Never bypass tenancy or RLS rules.
+# - For external sync (Maverick, notifications):
+#   - Use dedicated modules (notifications, webhooks).
+#   - Only send minimum necessary data per user.
+
+
+# =========================================================
+# 8. CODING STYLE, QUALITY & TESTING
+# =========================================================
+
+# - Use TypeScript strict mode across the repo.
+# - Prefer small, composable services and modules.
+# - Avoid business logic in controllers; keep it in services or in roster-engine/reg-engine packages.
+# - Write tests for:
+#   - Roster feasibility and scoring.
+#   - Dispatch release rules.
+#   - Regulatory rules (DGCA seed).
+#   - Tenancy isolation (no cross-tenant leaks).
+# - Ensure all new modules:
+#   - Have at least basic test coverage.
+#   - Use DTOs and validation for all inputs.
+
+# =========================================================
+# 9. SCOPE FOR CURRENT BUILD (7–10 DAY MVP)
+# =========================================================
+
+# The MVP this repo should converge to NOW:
+
+# 1) Single-region (one RDD simulated), DGCA-focused Skynet+.
+# 2) Auth + Tenant + Roles (ADMIN/OPS/INSTRUCTOR/STUDENT).
+# 3) Core domain:
+#    - Users, Instructors, Students, Aircraft, Lessons, Student Progress (basic).
+# 4) RegulatoryEngine:
+#    - DGCA lesson minima & simple duty rules integrated.
+# 5) RosterEngine:
+#    - Hard constraints: availability, capabilities, DGCA lesson minima.
+#    - Soft constraints: simple workload & continuity.
+#    - APIs to create/solve roster plans and manage assignments.
+# 6) Environment module:
+#    - Store & serve WX/NOTAM snapshots (mock or single provider).
+# 7) Dispatch module:
+#    - Today's roster view, Check & Release flow, integrated with env & roster.
+# 8) Frontend:
+#    - Ops dashboard, CRUD for core entities, roster screen, dispatch console, personal schedules.
+# 9) Audit:
+#    - Log roster changes, dispatch releases, key actions.
+
+# Anything beyond this (multi-regulator, full ML, global infra, full placement, Skynet X)
+# should be designed for, but not fully implemented in this initial sprint.
+
+
+# =========================================================
+# 10. THINGS THE AI MUST NOT DO
+# =========================================================
+
+# - Do NOT:
+#   - Remove tenantId from models that should be tenant-scoped.
+#   - Introduce cross-tenant queries or joins.
+#   - Hardcode secrets, keys, or provider URLs.
+#   - Bypass RegulatoryEngine and embed regulator logic ad-hoc.
+#   - Bypass EnvironmentService for WX/NOTAM when used by roster/dispatch.
+#   - Auto-confirm or auto-release flights without audit trail and explainability.
+
+# - Always:
+#   - Preserve this architecture.
+#   - Prefer clarity, safety, and maintainability over clever shortcuts.
+#   - Remember: Skynet+ is mission-critical ops software, not a toy app.
+
+# End of .cursorrules
+
