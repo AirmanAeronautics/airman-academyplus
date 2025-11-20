@@ -33,6 +33,7 @@ import Marketing from "./pages/Marketing";
 import Support from "./pages/Support";
 import Messages from "./pages/Messages";
 import Reports from "./pages/Reports";
+import DemoFlowPage from "./pages/DemoFlowPage";
 import NotFound from "./pages/NotFound";
 import AirmanRosterDemo from "./pages/AirmanRosterDemo";
 
@@ -71,6 +72,7 @@ const App = () => (
                         <Route path="/support" element={<Support />} />
                         <Route path="/messages" element={<Messages />} />
                         <Route path="/reports" element={<Reports />} />
+                        <Route path="/demo" element={<DemoFlowPage />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
